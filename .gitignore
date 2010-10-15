@@ -2,3 +2,9 @@ _build*
 build*
 +committed/
 ,*
+Makefile.in
+.version
+autom4te.cache
+config.h.in
+configure
+aclocal.m4
