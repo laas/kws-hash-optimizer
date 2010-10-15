@@ -16,24 +16,9 @@ EXTRA_DIST += bootstrap deps.ac build-aux/bootstrap
 # Nothing to do in this directory.
 all:
 
-# Libtool rules
-LIBTOOL_DEPS = @LIBTOOL_DEPS@
-libtool: $(LIBTOOL_DEPS)
-	$(SHELL) ./config.status --recheck
-
+# Include various rules...
+include $(top_srcdir)/build-aux/dist-sign.mk
+include $(top_srcdir)/build-aux/doc-recursive.mk
+include $(top_srcdir)/build-aux/libtool.mk
 include $(top_srcdir)/build-aux/pkg-config.mk
-
-# Search for headers properly:
-AM_CPPFLAGS += 					\
-	$(HPP_UTIL_CFLAGS)
-
-# Link against the library (here supposing your library is called
-# `hpp-MYPACKAGE.la` and only depends on `hpp-util` which is usually wrong):
-libhpp_MYPACKAGE_la_LIBADD = 		\
-	$(HPP_UTIL_LIBS)
-
-# Generate documentation.
-.PHONY: doc html
-doc html:
-	cd doc && $(MAKE) $(AM_MAKEFLAGS) $@
-
+include $(top_srcdir)/build-aux/git-version-gen.mk
