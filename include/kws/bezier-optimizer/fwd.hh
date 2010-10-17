@@ -27,6 +27,7 @@ namespace kws
   namespace bezieroptimizer
   {
     class Optimizer;
+    KIT_PREDEF_CLASS (Optimizer);
   } // end of namespace bezieroptimizer 
 } // end of namespace kws.
 
