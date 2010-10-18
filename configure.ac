@@ -34,7 +34,6 @@ fi
 
 # Customize warnings.
 JRL_CXX_WARNINGS([[-Wall],
-                   [-Werror],
                    [-Wcast-align],
                    [-Wcast-qual],
                    [-Wformat],
@@ -70,8 +69,16 @@ AC_SUBST([PKGCONFIG_DESCRIPTION], [kws-bezier-optimizer])
 AC_SUBST([PKGCONFIG_CONFLICTS], [])
 AC_SUBST([PKGCONFIG_LIBS], [-lkws-bezier-optimizer])
 AC_SUBST([PKGCONFIG_CFLAGS], [])
-JRL_PKGCONFIGCHECK_ADDDEP([HPP_UTIL], [hpp-util])
 
+JRL_PKGCONFIGCHECK_ADDDEP([HPPCORE], [hppCore >= 1.10])
+JRL_PKGCONFIGCHECK_ADDDEP([HPP_UTIL], [hpp-util])
+JRL_PKGCONFIGCHECK_ADDDEP([KWSPLUS], [kwsPlus >= 1.8])
+
+JRL_PKGCONFIGCHECK_ADDDEP([KINEOCONTROLLER], [KineoController])
+AC_SUBST([KINEO_LIBDIR],[${KINEOCONTROLLER_PREFIX}/lib])
+AC_SUBST(KINEO_PREFIX, [${KINEOPATHPLANNER_PREFIX}])
+AC_SUBST([KINEO_ADDON_BUILDER],
+	[${KINEOCONTROLLER_PREFIX}/bin/KineoAddonBuilder])
 
 ## ------------ ##
 ## Test-suite.  ##
