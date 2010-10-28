@@ -11,12 +11,12 @@ AM_CPPFLAGS += 					\
 	$(HPP_UTIL_CFLAGS)			\
 	$(HPPCORE_CFLAGS)
 
-lib_LTLIBRARIES = libkws-bezier-optimizer.la
+lib_LTLIBRARIES = libkws-hash-optimizer.la
 
-libkws_bezier_optimizer_la_SOURCES = 			\
+libkws_hash_optimizer_la_SOURCES = 			\
 				optimizer.cc
 
-libkws_bezier_optimizer_la_LIBADD = 		\
+libkws_hash_optimizer_la_LIBADD = 		\
 	$(HPP_UTIL_LIBS) 				\
 	$(HPPCORE_LIBS)	
 
@@ -24,4 +24,4 @@ libhpp_walkfootplanner_la_LIBADD = 		\
 	$(HPPCORE_LIBS) 			\
 	$(HPP_UTIL_LIBS)
 
-#libkws_bezier_optimizer_la_CPPFLAGS = $( AM_CPPFLAGS)
+#libkws_hash_optimizer_la_CPPFLAGS = $( AM_CPPFLAGS)
