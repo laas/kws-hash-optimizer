@@ -5,10 +5,10 @@ AC_PREREQ([2.63])
 ## --------------------- ##
 ## Package configuration ##
 ## --------------------- ##
-AC_INIT([kws-bezier-optimizer],
+AC_INIT([kws-hash-optimizer],
 	[0.1],
 	[aelkhour@laas.fr],
-	[kws-bezier-optimizer])
+	[kws-hash-optimizer])
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])
@@ -65,9 +65,9 @@ m4_include([deps.ac])
 ## Pkg-config.  ##
 ## ------------ ##
 
-AC_SUBST([PKGCONFIG_DESCRIPTION], [kws-bezier-optimizer])
+AC_SUBST([PKGCONFIG_DESCRIPTION], [kws-hash-optimizer])
 AC_SUBST([PKGCONFIG_CONFLICTS], [])
-AC_SUBST([PKGCONFIG_LIBS], [-lkws-bezier-optimizer])
+AC_SUBST([PKGCONFIG_LIBS], [-lkws-hash-optimizer])
 AC_SUBST([PKGCONFIG_CFLAGS], [])
 
 JRL_PKGCONFIGCHECK_ADDDEP([HPPCORE], [hppCore >= 1.10])
@@ -87,6 +87,11 @@ AC_SUBST([KINEO_ADDON_BUILDER],
 AC_CONFIG_TESTDIR([tests])
 AM_MISSING_PROG([AUTOM4TE], [autom4te])
 
+## ------------ ##
+## Pkg-config.  ##
+## ------------ ##
+
+AC_SUBST([PKGCONFIG_REQUIRES], [`echo "$PKGCONFIG_REQUIRES" | sed 's/, $//'`])
 
 ## -------------- ##
 ## Write output.  ##
