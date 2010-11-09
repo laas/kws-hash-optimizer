@@ -224,7 +224,7 @@ namespace kws
 			      unsigned int i_int,
 			      const unsigned int i_nbSteps,
 			      CkwsConfig& io_lastConfig,
-			      CkwsConfig io_reorientedCfg,
+			      CkwsConfig& io_reorientedCfg,
 			      CkwsPathShPtr& io_path);
 
       // FIXME: doxygen
@@ -238,7 +238,7 @@ namespace kws
 			      unsigned int i_int,
 			      const unsigned int i_nbSteps,
 			      CkwsConfig& io_lastConfig,
-			      CkwsConfig io_reorientedCfg,
+			      CkwsConfig& io_reorientedCfg,
 			      CkwsPathShPtr& io_path);
 
       // FIXME: doxygen
@@ -252,7 +252,7 @@ namespace kws
 			       unsigned int i_int,
 			       const unsigned int i_nbSteps,
 			       CkwsConfig& io_lastConfig,
-			       CkwsConfig io_reorientedCfg,
+			       CkwsConfig& io_reorientedCfg,
 			       CkwsPathShPtr& io_path);
 
       /// \brief Constructor
