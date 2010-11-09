@@ -488,7 +488,7 @@ namespace kws
 	    }
 	  else 
 	    {
-	      hppDout (notice, "*** appendModifiedPath: appended DP")
+	      hppDout (notice, "*** appendModifiedPath: appended DP");
 	      return KD_OK;
 	    }
 	}
