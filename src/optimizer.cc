@@ -209,6 +209,7 @@ namespace kws
       if (i_int == nbConfig - 2)
 	{
 	  i_path->getConfigAtEnd (o_config);
+	  hppDout (notice, "End configuration kept.");
 	  return KD_OK;
 	}
       
@@ -230,6 +231,7 @@ namespace kws
       if ((ithNbSteps < minStepsNb ()) || (ithNextNbSteps < minStepsNb ()))
 	{
 	  o_config = ithEndCfg;
+	  hppDout (notice, "End configuration kept.");
 	  return KD_OK;
 	}
 
