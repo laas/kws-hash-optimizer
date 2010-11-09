@@ -125,7 +125,13 @@ namespace kws
     
       unsigned int configsNumber = i_path->countConfigurations ();
       CkwsPathShPtr outPath = CkwsPath::create (device ());
-    
+      
+      if (configsNumber ==2)
+	{
+	  *o_path = *i_path;
+	  return KD_OK;
+	}
+
       for (unsigned int i = 0; i < configsNumber - 1; i++)
 	{
 	  // std::cout << "alignPathConfigs: " << i << std::endl;
@@ -136,6 +142,8 @@ namespace kws
     
       o_path = CkwsPath::create (device ());
       *o_path = *outPath;
+      
+      return KD_OK;
     }
 
     ktStatus Optimizer::retrieveValidators
