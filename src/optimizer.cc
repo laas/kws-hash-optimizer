@@ -136,6 +136,7 @@ namespace kws
 
       for (unsigned int i = 0; i < configsNumber - 1; i++)
 	{
+	  hppDout (notice, "Appending direct path number" << i);
 	  // std::cout << "alignPathConfigs: " << i << std::endl;
 	  appendModifiedDP (i_path, dpValidator, cfgValidator, i,
 			    outPath);
@@ -191,7 +192,10 @@ namespace kws
 	}
 
       if (dpSuccess != KD_ERROR && cfgSuccess != KD_ERROR)
-	return KD_OK;
+	{
+	  return KD_OK;
+	  hppDout (notice, "Validators retrieval complete.");
+	}
     }
 
     ktStatus Optimizer::alignEndConfig
@@ -207,7 +211,7 @@ namespace kws
 	  i_path->getConfigAtEnd (o_config);
 	  return KD_OK;
 	}
-    
+      
       CkwsConfig ithStartCfg (device ());
       CkwsConfig ithEndCfg (device ());
       CkwsConfig ithNextEndCfg (device ());
@@ -403,6 +407,7 @@ namespace kws
 	    }
 	}
       return KD_OK;
+      hppDout (notice, "End config alignment conmplete.");
     }
 
     ktStatus Optimizer::
@@ -857,6 +862,7 @@ namespace kws
 	  i++;
 	}
       return KD_OK;
+      hppDout (notice, "Direct path modification complete.");
     }
 
     ktStatus 
