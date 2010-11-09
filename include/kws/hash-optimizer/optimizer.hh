@@ -75,6 +75,37 @@ namespace kws
       virtual ktStatus alignPathConfigs (const CkwsPathShPtr& i_path,
 					 CkwsPathShPtr& o_path);
 
+
+      ktStatus alignEndConfig (const CkwsPathShPtr& i_path,
+			       const CkwsValidatorDPCollisionShPtr& i_dpValidator,
+			       const CkwsValidatorCfgCollisionShPtr& i_cfgValidator,
+			       unsigned int i_int,
+			       CkwsConfig& o_config); 
+    
+      ktStatus 
+      intermediateConfig (const CkwsConfig& i_leftCfg,
+			  const CkwsConfig& i_rightCfg,
+			  bool i_start,
+			  bool i_end,
+			  bool i_lateral,
+			  const CkwsDeviceShPtr& i_device,
+			  const CkwsValidatorCfgCollisionShPtr& i_cfgValidator,
+			  CkwsConfig& o_config);
+
+      ktStatus 
+      appendModifiedDP (const CkwsPathShPtr& i_path,
+			const CkwsValidatorDPCollisionShPtr& i_dpValidator,
+			const CkwsValidatorCfgCollisionShPtr& i_cfgValidator,
+			unsigned int i_int,
+			CkwsPathShPtr& io_path);
+
+      ktStatus backUpConfig (const CkwsConfig& i_lastCfg,
+			     const CkwsConfig& i_currentCfg,
+			     const CkwsDeviceShPtr& i_device, 
+			     const CkwsValidatorDPCollisionShPtr& i_dpValidator,
+			     const CkwsValidatorCfgCollisionShPtr& i_cfgValidator,
+			     CkwsConfig& o_config);
+
       /// \brief retrieves collision validators from input path.
       ///
       /// \param i_path Input path.
