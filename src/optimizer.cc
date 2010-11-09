@@ -101,6 +101,7 @@ namespace kws
 	  hppDout(error, "Basic optimization could not be completed");
 	  return KD_ERROR;
 	}
+      hppDout (notice, "Basic optimization complete.");
 
       CkwsPathShPtr outPath = CkwsPath::create (device ());
       
@@ -109,7 +110,8 @@ namespace kws
 	  hppDout(error, "Hash optimization could not be completed");
 	  return KD_ERROR;
 	}
-      
+      hppDout (notice, "Hash optimization complete.");
+
       *io_path = *outPath;
 
       return KD_OK;
