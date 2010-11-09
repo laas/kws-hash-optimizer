@@ -249,13 +249,13 @@ namespace kws
       ktStatus success = KD_OK;;
       if (!endCfg.isValid ())
 	{
-	  // std::cout << "alignEndConfig: aligned config invalid" << std::endl;
+	  hppDout (warning, "alignEndConfig: aligned config invalid");
 	  endCfg.dofValue (5, (atan2 (ithDeltaY, ithDeltaX) 
 			       + atan2 (ithNextDeltaY, ithNextDeltaX)) / 2 + M_PI / 2);
 	  i_cfgValidator->validate (endCfg);
 	  if (!endCfg.isValid ())
 	    {
-	      // std::cout << "alignEndConfig: orthogonal config invalid" << std::endl;
+	      hppDout (warning, "alignEndConfig: orthogonal config invalid");
 	      success = KD_ERROR;
 	    }
 	  else 
@@ -264,7 +264,7 @@ namespace kws
 						  false, true, device (),
 						  i_cfgValidator,	interCfg))
 		{
-		  // std::cout << "alignEndConfig: inter orth Cfg invalid"  << std::endl;
+		  hppDout (warning, "alignEndConfig: inter orth Cfg invalid");
 		  o_config = ithEndCfg;
 		}
 	      else 
@@ -275,28 +275,26 @@ namespace kws
 		  i_dpValidator->validate (*stepDP);
 		  if (!stepDP->isValid ())
 		    {
-		      // std::cout << "alignEndConfig: orth step DP invalid" << std::endl;
+		      hppDout (warning, "alignEndConfig: orth step DP invalid");
 		      success = KD_ERROR;
 		    }
 		  else 
 		    {
-		      // std::cout << "alignEndConfig: aligned orth Config valid" 
-		      // 	      << std::endl;
+		      hppDout (notice, "alignEndConfig: aligned orth Config valid");
 		      o_config = endCfg;
 		    }
 		}
 	    }
 	  if (success != KD_OK)
 	    {
-	      // std::cout << "trying second orthogonal" << std::endl;
+	      hppDout (notice, "trying second orthogonal");
 	      endCfg.dofValue (5, (atan2 (ithDeltaY, ithDeltaX) 
 				   + atan2 (ithNextDeltaY, ithNextDeltaX)) / 2 
 			       - M_PI / 2);
 	      i_cfgValidator->validate (endCfg);
 	      if (!endCfg.isValid ())
 		{
-		  // std::cout << "alignEndConfig: orthogonal config invalid" 
-		  // 	  << std::endl;
+		  hppDout (warning, "alignEndConfig: orthogonal config invalid");
 		  o_config = ithEndCfg;
 		}
 	      else 
@@ -307,14 +305,12 @@ namespace kws
 		  i_dpValidator->validate (*stepDP);
 		  if (!stepDP->isValid ())
 		    {
-		      // std::cout << "alignEndConfig: orth step DP invalid" 
-		      // 	      << std::endl;
+		      hppDout (warning, "alignEndConfig: orth step DP invalid");
 		      o_config = ithEndCfg;
 		    }
 		  else 
 		    {
-		      // std::cout << "alignEndConfig: aligned orth Config valid" 
-		      // 	      << std::endl;
+		      hppDout (notice, "alignEndConfig: aligned orth Config valid");
 		      o_config = endCfg;
 		    }
 		}
@@ -326,7 +322,7 @@ namespace kws
 					      true, device (), i_cfgValidator,
 					      interCfg))
 	    {
-	      // std::cout << "alignEndConfig: inter Cfg invalid"  << std::endl;
+	      hppDout (warning, "alignEndConfig: inter Cfg invalid");
 	      o_config = ithEndCfg;
 	    }
 	  else 
@@ -337,16 +333,15 @@ namespace kws
 	      i_dpValidator->validate (*stepDP);
 	      if (!stepDP->isValid ())
 		{
-		  // std::cout << "alignEndConfig: step DP invalid" << std::endl;
-		
+		  hppDout(warning, "alignEndConfig: step DP invalid");
+		 
 		  endCfg.dofValue (5, (atan2 (ithDeltaY, ithDeltaX) 
 				       + atan2 (ithNextDeltaY, ithNextDeltaX)) / 2 
 				   + M_PI / 2);
 		  i_cfgValidator->validate (endCfg);
 		  if (!endCfg.isValid ())
 		    {
-		      // std::cout << "alignEndConfig: orthogonal config invalid" 
-		      // 	      << std::endl;
+		      hppDout (warning, "alignEndConfig: orthogonal config invalid");
 		      success = KD_ERROR;
 		    }
 		  else 
@@ -356,28 +351,25 @@ namespace kws
 		      i_dpValidator->validate (*stepDP);
 		      if (!stepDP->isValid ())
 			{
-			  // std::cout << "alignEndConfig: orth step DP invalid" 
-			  // 	  << std::endl;
+			  hppDout (warning, "alignEndConfig: orth step DP invalid");
 			  success = KD_ERROR;
 			}
 		      else 
 			{
-			  // std::cout << "alignEndConfig: aligned orth Config valid" 
-			  // 	  << std::endl;
+			  hppDout (notice, "alignEndConfig: aligned orth Config valid");
 			  o_config = endCfg;
 			}
 		    }
 		  if (success != KD_OK)
 		    {
-		      // std::cout << "trying other orthogonal" << std::endl;
+		      hppDout (notice, "trying other orthogonal");
 		      endCfg.dofValue (5, (atan2 (ithDeltaY, ithDeltaX) 
 					   + atan2 (ithNextDeltaY, ithNextDeltaX)) / 2 
 				       - M_PI / 2);
 		      i_cfgValidator->validate (endCfg);
 		      if (!endCfg.isValid ())
 			{
-			  // std::cout << "alignEndConfig: orthogonal config invalid" 
-			  // 	  << std::endl;
+			  hppDout (warning, "alignEndConfig: orthogonal config invalid");
 			  o_config = ithEndCfg;
 			}
 		      else 
@@ -387,15 +379,12 @@ namespace kws
 			  i_dpValidator->validate (*stepDP);
 			  if (!stepDP->isValid ())
 			    {
-			      // std::cout << "alignEndConfig: orth step DP invalid" 
-			      // 	      << std::endl;
+			      hppDout (warning, "alignEndConfig: orth step DP invalid"); 
 			      o_config = ithEndCfg;
 			    }
 			  else 
 			    {
-			      // std::cout
-			      //   << "alignEndConfig: aligned orth Config valid" 
-			      //   << std::endl;
+			      hppDout (notice, "alignEndConfig: aligned orth Config valid");
 			      o_config = endCfg;
 			    }
 			}
@@ -403,11 +392,12 @@ namespace kws
 		}
 	      else 
 		{
-		  // std::cout << "alignEndConfig: aligned Config valid" << std::endl;
+		  hppDout (notice, "alignEndConfig: aligned Config valid");
 		  o_config = endCfg;
 		}
 	    }
 	}
+      
       return KD_OK;
       hppDout (notice, "End config alignment conmplete.");
     }
@@ -498,8 +488,7 @@ namespace kws
 	    }
 	  else 
 	    {
-	      // std::cout << "*** appendModifiedPath: appended DP" << std::endl;
-	      hppDout (notice, "Direct path appending complete."); 
+	      hppDout (notice, "*** appendModifiedPath: appended DP")
 	      return KD_OK;
 	    }
 	}
@@ -528,7 +517,7 @@ namespace kws
 
 	  if (KD_ERROR == success)
 	    {
-	      // std::cout << "*** config invalid" << std::endl;
+	      hppDout (warning, "*** config invalid");
 	      switch (mode)
 		{
 		case (STRAIGHT):
@@ -864,6 +853,7 @@ namespace kws
 	  previousCfg = currentModCfg;
 	  i++;
 	}
+
       return KD_OK;
       hppDout (notice, "Direct path modification complete.");
     }
