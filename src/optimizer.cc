@@ -884,6 +884,171 @@ namespace kws
       // std::cout << "****** backUpConfig: could not find backUp config" << std::endl;
       return KD_ERROR;
     }
+
+    ktStatus Optimizer::
+    appendHashedDP (const CkwsPathShPtr& i_path,
+		    const CkwsValidatorDPCollisionShPtr& i_dpValidator,
+		    const CkwsValidatorCfgCollisionShPtr& i_cfgValidator,
+		    unsigned int i_int,
+		    CkwsPathShPtr& io_path){return KD_OK;}
+
+    // FIXME {doxygen}
+    ktStatus Optimizer::
+    rotateDPEndConfig (const CkwsPathShPtr& i_path,
+		       unsigned int i_int,
+		       CkwsConfig& io_config){return KD_OK;}
+
+    // FIXME {doxygen}
+    ktStatus Optimizer::
+    reorientDPEndConfig (const CkwsPathShPtr& i_path,
+			 const CkwsValidatorDPCollisionShPtr&
+			 i_dpValidator,
+			 const CkwsValidatorCfgCollisionShPtr&
+			 i_cfgValidator,
+			 unsigned int i_int,
+			 CkwsConfig& o_config){return KD_OK;}
+
+    // FIXME {doxygen}
+    ktStatus Optimizer::
+    tryOrthogonalDPEndConfig (const CkwsPathShPtr& i_path,
+			      const CkwsConfig& i_originalConfig,
+			      const CkwsValidatorDPCollisionShPtr&
+			      i_dpValidator,
+			      const CkwsValidatorCfgCollisionShPtr&
+			      i_cfgValidator,
+			      unsigned int i_int,
+			      CkwsConfig& io_reorientedConfig){return KD_OK;}
+
+    // FIXME {doxygen}
+    ktStatus Optimizer::
+    tryMakeFrontalDPForEndConfig (const CkwsPathShPtr& i_path,
+				  const CkwsConfig& i_originalConfig,
+				  const CkwsValidatorDPCollisionShPtr&
+				  i_dpValidator,
+				  const CkwsValidatorCfgCollisionShPtr&
+				  i_cfgValidator,
+				  unsigned int i_int,
+				  CkwsConfig& io_reorientedConfig){return KD_OK;}
+
+    // FIXME {doxygen}
+    ktStatus Optimizer::
+    tryMakeOrthogonalDPForEndConfig (const CkwsPathShPtr& i_path,
+				     const CkwsConfig& i_originalConfig,
+				     const CkwsValidatorDPCollisionShPtr&
+				     i_dpValidator,
+				     const CkwsValidatorCfgCollisionShPtr&
+				     i_cfgValidator,
+				     unsigned int i_int,
+				     CkwsConfig& io_reorientedConfig){return KD_OK;}
+
+    // FIXME {doxygen}
+    ktStatus Optimizer:: nextStepConfig (const CkwsConfig& i_beginConfig,
+				     const CkwsConfig& i_endConfig,
+				     const CkwsConfig& i_nextDPEndConfig,
+				     unsigned int i_orientation,
+				     const CkwsValidatorCfgCollisionShPtr&
+				     i_cfgValidator,
+				     CkwsConfig& o_config){return KD_OK;}
+      
+    // FIXME {doxygen}
+    ktStatus Optimizer::
+    adjustLateralConfig (const CkwsConfig& i_endConfig,
+			 const CkwsConfig& i_nextDPEndConfig,
+			 CkwsConfig& io_config){return KD_OK;}
+
+    // FIXME {doxygen}
+    ktStatus Optimizer::
+    adjustOriginalConfig (const CkwsConfig& i_endConfig,
+			  CkwsConfig& io_config){return KD_OK;}
+
+    // FIXME {doxygen}
+    ktStatus Optimizer::
+    tryMakeStepDP (const CkwsConfig& i_beginConfig,
+		   const CkwsConfig& i_endConfig,
+		   const CkwsValidatorDPCollisionShPtr& i_dpValidator){return KD_OK;}
+	
+    // FIXME {doxygen}
+    ktStatus Optimizer::
+    appendStepDP (const CkwsConfig& i_dpEndConfig,
+		  const CkwsConfig& i_nextDPEndConfig,
+		  const CkwsValidatorDPCollisionShPtr&
+		  i_dpValidator,
+		  const CkwsValidatorCfgCollisionShPtr&
+		  i_cfgValidator,
+		  unsigned int i_int,
+		  const unsigned int i_nbSteps,
+		  CkwsConfig& io_lastConfig,
+		  CkwsPathShPtr& io_path){return KD_OK;}
+
+    // FIXME: doxygen
+    ktStatus Optimizer::
+    tryLateralStepConfig (const CkwsConfig& i_dpEndConfig,
+			  const CkwsConfig i_nextDPEndConfig,
+			  const CkwsValidatorDPCollisionShPtr&
+			  i_dpValidator,
+			  const CkwsValidatorCfgCollisionShPtr&
+			  i_cfgValidator,
+			  unsigned int i_int,
+			  const unsigned int i_nbSteps,
+			  CkwsConfig& io_lastConfig,
+			  CkwsConfig& io_reorientedConfig,
+			  CkwsPathShPtr& io_path){return KD_OK;}
+
+    // FIXME: doxygen      
+    ktStatus Optimizer::
+    tryOriginalStepConfig (const CkwsConfig& i_dpEndConfig,
+			   const CkwsConfig i_nextDPEndConfig,
+			   const CkwsValidatorDPCollisionShPtr&
+			   i_dpValidator,
+			   const CkwsValidatorCfgCollisionShPtr&
+			   i_cfgValidator,
+			   unsigned int i_int,
+			   const unsigned int i_nbSteps,
+			   CkwsConfig& io_lastConfig,
+			   CkwsConfig& io_reorientedConfig,
+			   CkwsPathShPtr& io_path){return KD_OK;}
+
+    // FIXME: doxygen
+    ktStatus Optimizer::
+    tryAppendFrontalStepDP (const CkwsConfig& i_dpEndConfig,
+			    const CkwsConfig i_nextDPEndConfig,
+			    const CkwsValidatorDPCollisionShPtr&
+			    i_dpValidator,
+			    const CkwsValidatorCfgCollisionShPtr&
+			    i_cfgValidator,
+			    unsigned int i_int,
+			    const unsigned int i_nbSteps,
+			    CkwsConfig& io_lastConfig,
+			    CkwsConfig& io_reorientedCfg,
+			    CkwsPathShPtr& io_path){return KD_OK;}
+
+    // FIXME: doxygen
+    ktStatus Optimizer::
+    tryAppendLateralStepDP (const CkwsConfig& i_dpEndConfig,
+			    const CkwsConfig i_nextDPEndConfig,
+			    const CkwsValidatorDPCollisionShPtr&
+			    i_dpValidator,
+			    const CkwsValidatorCfgCollisionShPtr&
+			    i_cfgValidator,
+			    unsigned int i_int,
+			    const unsigned int i_nbSteps,
+			    CkwsConfig& io_lastConfig,
+			    CkwsConfig& io_reorientedCfg,
+			    CkwsPathShPtr& io_path){return KD_OK;}
+
+    // FIXME: doxygen
+    ktStatus Optimizer::
+    tryAppendOriginalStepDP (const CkwsConfig& i_dpEndConfig,
+			     const CkwsConfig i_nextDPEndConfig,
+			     const CkwsValidatorDPCollisionShPtr&
+			     i_dpValidator,
+			     const CkwsValidatorCfgCollisionShPtr&
+			     i_cfgValidator,
+			     unsigned int i_int,
+			     const unsigned int i_nbSteps,
+			     CkwsConfig& io_lastConfig,
+			     CkwsConfig& io_reorientedCfg,
+			     CkwsPathShPtr& io_path){return KD_OK;}
      
     Optimizer::Optimizer (unsigned int i_nbLoops,
 			  double i_double,
