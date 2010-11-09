@@ -126,11 +126,11 @@ namespace kws
       unsigned int configsNumber = i_path->countConfigurations ();
       CkwsPathShPtr outPath = CkwsPath::create (device ());
       
-      if (configsNumber ==2)
-	{
-	  *o_path = *i_path;
-	  return KD_OK;
-	}
+      // if (configsNumber ==2)
+      // 	{
+      // 	  *o_path = *i_path;
+      // 	  return KD_OK;
+      // 	}
 
       for (unsigned int i = 0; i < configsNumber - 1; i++)
 	{
