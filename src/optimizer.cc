@@ -136,7 +136,7 @@ namespace kws
 
       for (unsigned int i = 0; i < configsNumber - 1; i++)
 	{
-	  hppDout (notice, "Appending direct path number" << i);
+	  hppDout (notice, "Appending direct path number " << i);
 	  // std::cout << "alignPathConfigs: " << i << std::endl;
 	  appendModifiedDP (i_path, dpValidator, cfgValidator, i,
 			    outPath);
@@ -497,6 +497,7 @@ namespace kws
 	  else 
 	    {
 	      // std::cout << "*** appendModifiedPath: appended DP" << std::endl;
+	      hppDout (notice, "Direct path appending complete."); 
 	      return KD_OK;
 	    }
 	}
@@ -510,7 +511,7 @@ namespace kws
       unsigned int i = 0;
       while (i < nbSteps)
 	{
-	  // std::cout << "*** makeModifiedPath: " << i << std::endl;
+	  hppDout (notice, "*** makeModifiedPath: " << i);
 	  if (i == nbSteps - 1)
 	    {
 	      currentModCfg = endCfg;
