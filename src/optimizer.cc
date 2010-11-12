@@ -106,14 +106,16 @@ namespace kws
       CkwsPathShPtr outPath = CkwsPath::create (device ());
       
       if (KD_ERROR == alignPathConfigs (copyPath, outPath))
-	{
-	  hppDout(error, "Hash optimization could not be completed");
-	  return KD_ERROR;
-	}
-      hppDout (notice, "Hash optimization complete.");
+      	{
+      	  hppDout(error, "Hash optimization could not be completed");
+      	  return KD_ERROR;
+      	}
+      hppDout (notice, "Hash optimization complete." << outPath->countConfigurations ());
 
       *io_path = *outPath;
 
+      hppDout (notice, "io_path: " << io_path->countConfigurations ());
+      
       return KD_OK;
     }   
 
@@ -397,9 +399,9 @@ namespace kws
 		}
 	    }
 	}
-      
+
+      hppDout (notice, "End config alignment conmplete.");      
       return KD_OK;
-      hppDout (notice, "End config alignment conmplete.");
     }
 
     ktStatus Optimizer::
@@ -854,8 +856,8 @@ namespace kws
 	  i++;
 	}
 
-      return KD_OK;
       hppDout (notice, "Direct path modification complete.");
+      return KD_OK;
     }
 
     ktStatus 
