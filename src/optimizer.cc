@@ -108,7 +108,6 @@ namespace kws
       if (KD_ERROR == alignPathConfigs (copyPath, outPath))
 	{
 	  hppDout(error, "Hash optimization could not be completed");
-	  return KD_ERROR;
 	}
       
       hppDout (notice, "outPath number of nodes: " 
