@@ -279,7 +279,9 @@ namespace kws
 		       unsigned int i_int,
 		       CkwsConfig& io_config)
     {
+      i_path->getConfiguration (i_int + 1, io_config);
       unsigned int configsNumber = i_path->countConfigurations (); 
+
       if (i_int == configsNumber - 2)
 	{
 	  hppDout (notice, "Cannot rotate path end configuration");
@@ -331,8 +333,6 @@ namespace kws
 	  hppDout (notice, "Rotating direct path end configuration by k*PI" 
 		   << i_int);
 	  
-	  i_path->getConfigAtEnd (o_config);
-	  
 	  rotateDPEndConfig (i_path, i_int, o_config);
 	  
 	  return KD_OK;
@@ -354,26 +354,25 @@ namespace kws
 
       // Try to align direct path end configuration along the average
       // direction of the two adjacent direct paths.
-      CkwsConfig dpEndCfg (device ());
-      dpEndCfg = ithDPEndCfg;
-      dpEndCfg.dofValue (5, (atan2 (ithDeltaY, ithDeltaX) 
+      o_config = ithDPEndCfg;
+      o_config.dofValue (5, (atan2 (ithDeltaY, ithDeltaX) 
 			     + atan2 (ithNextDeltaY, ithNextDeltaX)) / 2);
-      i_cfgValidator->validate (dpEndCfg);
+      i_cfgValidator->validate (o_config);
 
-      if (!dpEndCfg.isValid ())
+      if (!o_config.isValid ())
 	{
 	  hppDout (warning, "reorient direct path end config frontally failed "
 		   << i_int);
 	
 	  // Try to reorient configuration orthogonally.
 	  tryOrthogonalDPEndConfig (i_path, ithDPEndCfg, i_dpValidator,
-				    i_cfgValidator, i_int, dpEndCfg);
+				    i_cfgValidator, i_int, o_config);
 	}
       else
 	{
 	  // Verify step direct path after direct path end configuration.
 	  tryMakeFrontalDPForEndConfig (i_path, ithDPEndCfg, i_dpValidator,
-					i_cfgValidator, i_int, dpEndCfg);
+					i_cfgValidator, i_int, o_config);
 	}
 
       return KD_OK;
