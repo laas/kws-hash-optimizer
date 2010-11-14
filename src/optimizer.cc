@@ -207,10 +207,15 @@ namespace kws
 	dpStartCfg = i_dp->startConfiguration ();
       else io_path->getConfigAtEnd (dpStartCfg);
       CkwsConfig dpEndCfg (device ());
-      
+      i_dp->getConfigAtEnd (dpEndCfg);
+
       // Check first if direct path is hashable. If not append direct
       // path by only modifying its end configuration.
-      unsigned int nbSteps = (int)(i_dp->length () / stepSize ()); 
+      double deltaX = dpEndCfg.dofValue (0) - dpStartCfg.dofValue (0);
+      double deltaY = dpEndCfg.dofValue (1) - dpStartCfg.dofValue (1);
+      double dpNorm = sqrt (pow (deltaX, 2) + pow (deltaY, 2));
+      
+      unsigned int nbSteps = (int)(dpNorm / stepSize ());
       if (nbSteps < minStepsNb ())
 	{
 	  // Keep original direct path end configuration modulo Pi to
