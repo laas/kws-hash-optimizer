@@ -598,7 +598,7 @@ namespace kws
       // Get next step configuration with frontal orientation.
       ktStatus success;
       CkwsConfig nextStepCfg (device ());
-      if (i_int == i_nbSteps)
+      if (i_int == i_nbSteps - 1)
 	{
 	  nextStepCfg = i_dpEndConfig;
 	  success = KD_OK;
