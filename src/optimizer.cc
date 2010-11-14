@@ -580,7 +580,14 @@ namespace kws
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
 	= linearSM->makeDirectPath (i_beginConfig, i_endConfig);
-      i_dpValidator->validate (*stepDP);
+      
+      if (!stepDP)
+	{
+	  hppDout (error, "StepDP was not made.");
+	  return KD_ERROR;
+	}
+      else i_dpValidator->validate (*stepDP);
+      
       if (!stepDP->isValid ())
 	{
 	  hppDout (error, "Step DP is not valid");
@@ -710,7 +717,13 @@ namespace kws
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
 	= linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
-      i_dpValidator->validate (*stepDP);
+
+      if (!stepDP)
+	{
+	  hppDout (error, "StepDP was not made.");
+	  return KD_ERROR;
+	}
+      else i_dpValidator->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
@@ -750,7 +763,13 @@ namespace kws
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
 	= linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
-      i_dpValidator->validate (*stepDP);
+
+      if (!stepDP)
+	{
+	  hppDout (error, "StepDP was not made.");
+	  return KD_ERROR;
+	}
+      else i_dpValidator->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
@@ -790,7 +809,13 @@ namespace kws
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
 	= linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
-      i_dpValidator->validate (*stepDP);
+
+      if (!stepDP)
+	{
+	  hppDout (error, "StepDP was not made.");
+	  return KD_ERROR;
+	}
+      else i_dpValidator->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
