@@ -365,14 +365,16 @@ namespace kws
 		   << i_int);
 	
 	  // Try to reorient configuration orthogonally.
-	  tryOrthogonalDPEndConfig (i_path, ithDPEndCfg, i_dpValidator,
-				    i_cfgValidator, i_int, o_config);
+	  tryOrthogonalDPEndConfig (i_path, ithDPEndCfg, ithNextDPEndCfg,
+				    i_dpValidator, i_cfgValidator, i_int,
+				    o_config);
 	}
       else
 	{
 	  // Verify step direct path after direct path end configuration.
-	  tryMakeFrontalDPForEndConfig (i_path, ithDPEndCfg, i_dpValidator,
-					i_cfgValidator, i_int, o_config);
+	  tryMakeFrontalDPForEndConfig (i_path, ithDPEndCfg, ithNextDPEndCfg,
+					i_dpValidator, i_cfgValidator, i_int,
+					o_config);
 	}
 
       return KD_OK;
@@ -381,6 +383,7 @@ namespace kws
     ktStatus Optimizer::
     tryOrthogonalDPEndConfig (const CkwsPathShPtr& i_path,
 			      const CkwsConfig& i_originalConfig,
+			      const CkwsConfig& i_nextDPEndConfig,
 			      const CkwsValidatorDPCollisionShPtr&
 			      i_dpValidator,
 			      const CkwsValidatorCfgCollisionShPtr&
@@ -408,7 +411,8 @@ namespace kws
 	{
 	  // Verify step direct path after direct path end configuration.
 	  tryMakeOrthogonalDPForEndConfig (i_path, i_originalConfig,
-					   i_dpValidator, i_cfgValidator, i_int,
+					   i_nextDPEndConfig, i_dpValidator,
+					   i_cfgValidator, i_int,
 					   io_reorientedConfig);
 
 	  return KD_OK;
@@ -418,6 +422,7 @@ namespace kws
     ktStatus Optimizer::
     tryMakeFrontalDPForEndConfig (const CkwsPathShPtr& i_path,
 				  const CkwsConfig& i_originalConfig,
+				  const CkwsConfig& i_nextDPEndConfig,
 				  const CkwsValidatorDPCollisionShPtr&
 				  i_dpValidator,
 				  const CkwsValidatorCfgCollisionShPtr&
@@ -428,7 +433,7 @@ namespace kws
       CkwsConfig nextStepDPCfg (device ());
       
       // FIXME: Change third parameter to nextDPEndCfg if possible.
-      if (KD_ERROR == nextStepConfig (io_reorientedConfig, i_originalConfig,
+      if (KD_ERROR == nextStepConfig (io_reorientedConfig, i_nextDPEndConfig,
 				      nextStepDPCfg, LATERAL, i_cfgValidator,
 				      nextStepDPCfg))
 	{
@@ -450,8 +455,10 @@ namespace kws
 	    {
 	      hppDout (error, "tryMakeStepDP is not valid " << i_int);
 	      
-	      tryOrthogonalDPEndConfig (i_path, i_originalConfig, i_dpValidator,
-					i_cfgValidator, i_int, io_reorientedConfig);
+	      tryOrthogonalDPEndConfig (i_path, i_originalConfig,
+					i_nextDPEndConfig, i_dpValidator,
+					i_cfgValidator, i_int,
+					io_reorientedConfig);
 	    }
 	}
       
@@ -461,6 +468,7 @@ namespace kws
     ktStatus Optimizer::
     tryMakeOrthogonalDPForEndConfig (const CkwsPathShPtr& i_path,
 				     const CkwsConfig& i_originalConfig,
+				     const CkwsConfig& i_nextDPEndConfig,
 				     const CkwsValidatorDPCollisionShPtr&
 				     i_dpValidator,
 				     const CkwsValidatorCfgCollisionShPtr&
@@ -471,7 +479,7 @@ namespace kws
       CkwsConfig nextStepDPCfg (device ());
       
       // FIXME: Change third parameter to nextDPEndCfg if possible.
-      if (KD_ERROR == nextStepConfig (io_reorientedConfig, i_originalConfig,
+      if (KD_ERROR == nextStepConfig (io_reorientedConfig, i_nextDPEndConfig,
 				      nextStepDPCfg, LATERAL, i_cfgValidator,
 				      nextStepDPCfg))
 	{

@@ -117,6 +117,7 @@ namespace kws
       virtual ktStatus
       tryOrthogonalDPEndConfig (const CkwsPathShPtr& i_path,
 				const CkwsConfig& i_originalConfig,
+				const CkwsConfig& i_nextDPEndConfig,
 				const CkwsValidatorDPCollisionShPtr&
 				i_dpValidator,
 				const CkwsValidatorCfgCollisionShPtr&
@@ -128,6 +129,7 @@ namespace kws
       virtual ktStatus
       tryMakeFrontalDPForEndConfig (const CkwsPathShPtr& i_path,
 				    const CkwsConfig& i_originalConfig,
+				    const CkwsConfig& i_nextDPEndConfig,
 				    const CkwsValidatorDPCollisionShPtr&
 				    i_dpValidator,
 				    const CkwsValidatorCfgCollisionShPtr&
@@ -139,6 +141,7 @@ namespace kws
       virtual ktStatus
       tryMakeOrthogonalDPForEndConfig (const CkwsPathShPtr& i_path,
 				       const CkwsConfig& i_originalConfig,
+				       const CkwsConfig& i_nextDPEndConfig,
 				       const CkwsValidatorDPCollisionShPtr&
 				       i_dpValidator,
 				       const CkwsValidatorCfgCollisionShPtr&
