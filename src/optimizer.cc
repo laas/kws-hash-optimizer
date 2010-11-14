@@ -32,9 +32,10 @@
 #include <KineoWorks2/kwsSMLinear.h>
 #include <KineoWorks2/kwsAdaptiveShortcutOptimizer.h>
 
-//FIXME {update later hpp-util in robotpkg to include sstream}
+//FIXME: update later hpp-util in robotpkg to include sstream
 #include <sstream>
 #include <hpp/util/debug.hh>
+#include <hpp/util/indent.hh>
 
 #include "kws/hash-optimizer/optimizer.hh"
 
@@ -110,6 +111,8 @@ namespace kws
 	  return KD_ERROR;
 	}
       
+      hppDout (notice, "outPath number of nodes: " 
+	       << outPath->countConfigurations ());
       *io_path = *outPath;
 
       return KD_OK;
@@ -215,27 +218,27 @@ namespace kws
 	  // make it point towards the end of the next direct path.
 	  rotateDPEndConfig (i_path, i_int, dpEndCfg);
 
-	  // Append slightly modified direct path
+	  // Append modified direct path
 	  CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
 	  CkwsDirectPathShPtr directPath 
 	    = linearSM->makeDirectPath (dpStartCfg, dpEndCfg);
 	  
-	  //FIXME {check direct path validity?}
+	  //FIXME: check direct path validity?
 	  if (KD_ERROR == io_path->appendDirectPath (directPath))
 	    {
-	      hppDout (error, "appendHashedPath: could not append DP "
-		       << i_int);
+	      hppDout (error, "Could not append DP " << i_int);
 	      return KD_ERROR;
 	    }
 	  else 
 	    {
-	      hppDout (notice, "appendHashedPath: appended DP "
-		       << i_int);
+	      hppDout (notice, "Appended DP " << i_int);
 	      return KD_OK;
 	    }
 	}
       
       // Reorient direct path end configuration.
+      hppDout (notice, "Reorienting direct path end configuration " 
+	       << i_int);
 
       if (KD_ERROR == reorientDPEndConfig (i_path, i_dpValidator,
 					   i_cfgValidator, i_int, dpEndCfg))
@@ -258,7 +261,8 @@ namespace kws
 	  // Reorient next configuration and append step direct path
 
 	  if (KD_ERROR == appendStepDP (dpEndCfg, nextDPEndCfg, i_dpValidator,
-					i_cfgValidator, i, nbSteps, lastCfg, io_path))
+					i_cfgValidator, i, nbSteps, lastCfg,
+					io_path))
 	    {
 	      hppDout (error, "Could not reorient configuration " << i);
 	      return KD_ERROR;
@@ -278,7 +282,7 @@ namespace kws
       unsigned int configsNumber = i_path->countConfigurations (); 
       if (i_int == configsNumber - 2)
 	{
-	  hppDout (notice, "rotateDPEndConfig: cannot rotate path end configuration");
+	  hppDout (notice, "Cannot rotate path end configuration");
 	  return KD_OK;
 	}
       else
@@ -308,6 +312,8 @@ namespace kws
       unsigned int nbConfig = i_path->countConfigurations ();
       if (i_int == nbConfig - 2)
 	{
+	  hppDout (notice, "Kept path end configuration.");
+
 	  i_path->getConfigAtEnd (o_config);
 	  return KD_OK;
 	}
@@ -322,6 +328,9 @@ namespace kws
       // Simply rotate by k*PI if next direct path is too small. 
       if (ithNextNbSteps < minStepsNb ())
 	{
+	  hppDout (notice, "Rotating direct path end configuration by k*PI" 
+		   << i_int);
+	  
 	  i_path->getConfigAtEnd (o_config);
 	  
 	  rotateDPEndConfig (i_path, i_int, o_config);
@@ -387,7 +396,7 @@ namespace kws
       if (!io_reorientedConfig.isValid ())
 	{
 	  hppDout (warning,
-		   "reorient direct path end config orthogonally failed" 
+		   "Reorient direct path end config orthogonally failed" 
 		   << i_int);
 	
 	  // Keep original configuration.
@@ -434,6 +443,9 @@ namespace kws
       else
 	{
 	  // Validate step direct path.
+	  hppDout (notice, "nextStepConfig LATERAL is valid " 
+		   << i_int);
+	  
 	  if (KD_ERROR == tryMakeStepDP (io_reorientedConfig, nextStepDPCfg,
 					 i_dpValidator))
 	    {
@@ -464,8 +476,7 @@ namespace kws
 				      nextStepDPCfg, LATERAL, i_cfgValidator,
 				      nextStepDPCfg))
 	{
-	  hppDout (warning, "nextStepConfig LATERAL is not valid "
-		   << i_int);
+	  hppDout (warning, "nextStepConfig LATERAL is not valid " << i_int);
 		
 	  // Keep original configuration and rotate it.
 	  io_reorientedConfig = i_originalConfig;
@@ -566,7 +577,7 @@ namespace kws
       i_dpValidator->validate (*stepDP);
       if (!stepDP->isValid ())
 	{
-	  hppDout (error, "step DP is not valid");
+	  hppDout (error, "Step DP is not valid");
 	  return KD_ERROR;
 	}
       else return KD_OK;
@@ -599,7 +610,6 @@ namespace kws
 				    nextStepCfg);
 	}
       
-      // 
       if (KD_ERROR == success)
 	{
 	  // Get next step configuratio with lateral orientation.
@@ -612,7 +622,8 @@ namespace kws
 	  // Try to append step DP with frontal orientation.
 	  tryAppendFrontalStepDP (i_dpEndConfig, i_nextDPEndConfig,
 				  i_dpValidator, i_cfgValidator, i_int,
-				  i_nbSteps, io_lastConfig, nextStepCfg, io_path);
+				  i_nbSteps, io_lastConfig, nextStepCfg,
+				  io_path);
 	}
 
       return KD_OK;
