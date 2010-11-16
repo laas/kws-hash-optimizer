@@ -89,6 +89,11 @@ namespace kws
       return step_size_;
     }
 
+    double Optimizer::lateralAngle ()
+    {
+      return lateral_angle_;
+    }
+
     ktStatus Optimizer::doOptimizePath (const CkwsPathShPtr& io_path)
     {
       CkwsAdaptiveShortcutOptimizerShPtr basicOptimizer
@@ -399,7 +404,7 @@ namespace kws
 			      CkwsConfig& io_reorientedConfig)
     {
       io_reorientedConfig.dofValue (5, io_reorientedConfig.dofValue (5) 
-				    + M_PI / 2);
+				    + lateralAngle ());
       i_cfgValidator->validate (io_reorientedConfig);
       
       if (!io_reorientedConfig.isValid ())
@@ -564,11 +569,10 @@ namespace kws
       if (i_orientation == FRONTAL)
       o_config.dofValue (5, atan2 (deltaY, deltaX));
       else if (i_orientation == LATERAL)
-	o_config.dofValue (5, atan2 (deltaY, deltaX) + M_PI / 2);
+	o_config.dofValue (5, atan2 (deltaY, deltaX) + lateralAngle ());
       else if (i_orientation == LATERAL_ADJUSTED)
 	{
-	  o_config.dofValue (5, atan2 (deltaY, deltaX) + M_PI / 2);
-	  adjustLateralConfig (i_endConfig, i_nextDPEndConfig, o_config);
+	  o_config.dofValue (5, atan2 (deltaY, deltaX) + lateralAngle ());
 	}
       else if (i_orientation == ORIGINAL)
 	{
@@ -964,6 +968,7 @@ namespace kws
       human_size_ = i_double;
       min_steps_number_ = i_nbSteps;
       step_size_ = human_size_/6;
+      lateral_angle_ = M_PI / 2;
     }
 
   } // end of namespace hashoptimizer.

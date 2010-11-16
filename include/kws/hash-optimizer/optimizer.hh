@@ -57,6 +57,9 @@ namespace kws
       /// \brief Get value of min_steps_number_
       unsigned int minStepsNb ();
 
+      /// \brief Get value of lateral_angle_
+      double lateralAngle ();
+
     protected:
       // FIXME {doxygen}
       enum {FRONTAL, LATERAL, LATERAL_ADJUSTED, ORIGINAL};
@@ -306,6 +309,8 @@ namespace kws
       double step_size_;
       
       unsigned int min_steps_number_;
+
+      double lateral_angle_;
 
       OptimizerWkPtr optimizer_;
     };
