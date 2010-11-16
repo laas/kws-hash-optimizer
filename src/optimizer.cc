@@ -817,12 +817,20 @@ namespace kws
       
       if (!stepDP->isValid ())
 	{
-	  // Try to orient previous config laterallt and make new direct path.
-	  tryPreviousLateralStepConfig (i_originalConfig, i_dpEndConfig,
-					i_nextDPEndConfig, i_dpValidator,
-					i_cfgValidator, i_int, i_nbSteps,
-					io_lastConfig, io_reorientedCfg,
-					io_path);
+	  // Try to orient previous config lateral and make new direct path.
+	  if (KD_ERROR ==
+	      tryPreviousLateralStepConfig (i_originalConfig, i_dpEndConfig,
+					    i_nextDPEndConfig, i_dpValidator,
+					    i_cfgValidator, i_int, i_nbSteps,
+					    io_lastConfig, io_reorientedCfg,
+					    io_path))
+	    {
+	      tryOriginalStepConfig (i_originalConfig, i_dpEndConfig,
+				     i_nextDPEndConfig, i_dpValidator,
+				     i_cfgValidator, i_int, i_nbSteps,
+				     io_lastConfig, io_reorientedCfg,
+				     io_path);
+	    }
 	}
       else
 	{
@@ -838,7 +846,7 @@ namespace kws
       
       return KD_OK;
     }
-
+      
     ktStatus Optimizer::
     tryPreviousLateralStepConfig (const CkwsConfig& i_originalConfig,
 				  const CkwsConfig& i_dpEndConfig,
@@ -853,10 +861,19 @@ namespace kws
 				  CkwsConfig& io_reorientedConfig,
 				  CkwsPathShPtr& io_path)
     {
-      // Remove last direct path.
-      io_path->extractToDirectPath (io_path->countDirectPaths () - 1);
-      io_path->getConfigAtEnd (io_lastConfig);
-
+      // Remove last step direct path only if it inside the current
+      // direct path.
+      if (i_int == 0)
+	{
+	  hppDout (warning, "cannot remove direct path.");
+	  return KD_ERROR;
+	}
+      else
+	{
+	  io_path->extractToDirectPath (io_path->countDirectPaths () - 1);
+	  io_path->getConfigAtEnd (io_lastConfig);
+	}
+	  
       // Replace it with one where last configuration is oriented
       // laterally.
       CkwsConfig lateralCfg (device ());
@@ -865,6 +882,7 @@ namespace kws
 				      LATERAL_ADJUSTED, i_cfgValidator,
 				      lateralCfg))
 	{
+	  // FIXME: What to do in this case.
 	  hppDout (error, "Previous lateral configuration not valid.");
 	  return KD_OK;
 	}
