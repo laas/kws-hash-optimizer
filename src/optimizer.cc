@@ -256,7 +256,12 @@ namespace kws
       unsigned int i = 0;
       CkwsConfig lastCfg = dpStartCfg;
       CkwsConfig nextDPEndCfg (device ());
-      i_path->getConfiguration (i_int + 2, nextDPEndCfg);
+      
+      if (i_int == i_path->countConfigurations () - 1)
+	i_path->getConfiguration (i_int + 1, nextDPEndCfg);
+      else 
+	i_path->getConfiguration (i_int + 2, nextDPEndCfg);
+
       CkwsConfig originalCfg (device ());
 
       while (i < nbSteps)
@@ -568,11 +573,10 @@ namespace kws
       else if (i_orientation == LATERAL_ADJUSTED)
 	{
 	  o_config.dofValue (5, atan2 (deltaY, deltaX) + M_PI / 2);
-	  adjustLateralConfig (i_endConfig, i_nextDPEndConfig, o_config);
+	  adjustLateralConfig (i_nextDPEndConfig, o_config);
 	}
       else if (i_orientation == ORIGINAL)
 	{
-	  // FIXME: find a way to retrieve original configuration.
 	  adjustOriginalConfig (i_originalConfig, i_endConfig, o_config); 
 	}
       
@@ -587,11 +591,17 @@ namespace kws
     }
 
     ktStatus Optimizer::
-    adjustLateralConfig (const CkwsConfig& i_endConfig,
-			 const CkwsConfig& i_nextDPEndConfig,
+    adjustLateralConfig (const CkwsConfig& i_nextDPEndConfig,
 			 CkwsConfig& io_config)
     {
-      // FIXME: write body
+      double deltaX = i_nextDPEndConfig.dofValue (0) - io_config.dofValue (0);
+      double deltaY = i_nextDPEndConfig.dofValue (1) - io_config.dofValue (1);
+      double angle = io_config.dofValue (5);
+      double scalProd = deltaX * cos (angle) + deltaY * sin (angle);
+
+      if (scalProd < 0)
+	io_config.dofValue (5, angle + M_PI);
+      
       return KD_OK;
     }
 
@@ -600,7 +610,6 @@ namespace kws
 			  const CkwsConfig& i_endConfig,
 			  CkwsConfig& io_config)
     {
-      // FIXME: write body
       return KD_OK;
     }
 		 

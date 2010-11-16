@@ -168,8 +168,7 @@ namespace kws
       
       // FIXME {doxygen}
       virtual ktStatus
-      adjustLateralConfig (const CkwsConfig& i_endConfig,
-			   const CkwsConfig& i_nextDPEndConfig,
+      adjustLateralConfig (const CkwsConfig& i_nextDPEndConfig,
 			   CkwsConfig& io_config);
 
       // FIXME {doxygen}
