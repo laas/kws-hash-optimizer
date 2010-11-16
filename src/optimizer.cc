@@ -267,9 +267,9 @@ namespace kws
 
 	  getOriginalConfig (i_path, i_int, i, nbSteps, originalCfg);
 
-	  if (KD_ERROR == appendStepDP (dpEndCfg, nextDPEndCfg, i_dpValidator,
-					i_cfgValidator, i, nbSteps, lastCfg,
-					io_path))
+	  if (KD_ERROR == appendStepDP (originalCfg, dpEndCfg, nextDPEndCfg,
+					i_dpValidator, i_cfgValidator, i,
+					nbSteps, lastCfg, io_path))
 	    {
 	      hppDout (error, "Could not reorient configuration " << i);
 	      return KD_ERROR;
@@ -440,9 +440,9 @@ namespace kws
       CkwsConfig nextStepDPCfg (device ());
       
       // FIXME: Change third parameter to nextDPEndCfg if possible.
-      if (KD_ERROR == nextStepConfig (io_reorientedConfig, i_nextDPEndConfig,
-				      nextStepDPCfg, LATERAL, i_cfgValidator,
-				      nextStepDPCfg))
+      if (KD_ERROR == nextStepConfig (i_originalConfig, io_reorientedConfig,
+				      i_nextDPEndConfig, nextStepDPCfg, LATERAL,
+				      i_cfgValidator, nextStepDPCfg))
 	{
 	  hppDout (warning, "nextStepConfig LATERAL is not valid "
 		   << i_int);
@@ -486,9 +486,9 @@ namespace kws
       CkwsConfig nextStepDPCfg (device ());
       
       // FIXME: Change third parameter to nextDPEndCfg if possible.
-      if (KD_ERROR == nextStepConfig (io_reorientedConfig, i_nextDPEndConfig,
-				      nextStepDPCfg, LATERAL, i_cfgValidator,
-				      nextStepDPCfg))
+      if (KD_ERROR == nextStepConfig (i_originalConfig, io_reorientedConfig,
+				      i_nextDPEndConfig, nextStepDPCfg, LATERAL,
+				      i_cfgValidator, nextStepDPCfg))
 	{
 	  hppDout (warning, "nextStepConfig LATERAL is not valid " << i_int);
 		
@@ -535,7 +535,8 @@ namespace kws
       return KD_OK;
     }
 
-    ktStatus Optimizer::nextStepConfig (const CkwsConfig& i_beginConfig,
+    ktStatus Optimizer::nextStepConfig (const CkwsConfig& i_originalConfig, 
+					const CkwsConfig& i_beginConfig,
 					const CkwsConfig& i_endConfig,
 					const CkwsConfig& i_nextDPEndConfig,
 					unsigned int i_orientation,
@@ -572,7 +573,7 @@ namespace kws
       else if (i_orientation == ORIGINAL)
 	{
 	  // FIXME: find a way to retrieve original configuration.
-	  adjustOriginalConfig (i_endConfig, o_config); 
+	  adjustOriginalConfig (i_originalConfig, i_endConfig, o_config); 
 	}
       
       i_cfgValidator->validate (o_config);
@@ -595,7 +596,8 @@ namespace kws
     }
 
     ktStatus Optimizer::
-    adjustOriginalConfig (const CkwsConfig& i_endConfig,
+    adjustOriginalConfig (const CkwsConfig& i_originalConfig,
+			  const CkwsConfig& i_endConfig,
 			  CkwsConfig& io_config)
     {
       // FIXME: write body
@@ -627,7 +629,8 @@ namespace kws
     }
 
     ktStatus Optimizer::
-    appendStepDP (const CkwsConfig& i_dpEndConfig,
+    appendStepDP (const CkwsConfig& i_originalConfig,
+		  const CkwsConfig& i_dpEndConfig,
 		  const CkwsConfig& i_nextDPEndConfig,
 		  const CkwsValidatorDPCollisionShPtr&
 		  i_dpValidator,
@@ -648,24 +651,26 @@ namespace kws
 	}
       else
 	{
-	  success = nextStepConfig (io_lastConfig, i_dpEndConfig,
-				    i_nextDPEndConfig, FRONTAL, i_cfgValidator,
-				    nextStepCfg);
+	  success = nextStepConfig (i_originalConfig, io_lastConfig,
+				    i_dpEndConfig, i_nextDPEndConfig, FRONTAL,
+				    i_cfgValidator, nextStepCfg);
 	}
       
       if (KD_ERROR == success)
 	{
 	  // Get next step configuratio with lateral orientation.
-	  tryLateralStepConfig (i_dpEndConfig, i_nextDPEndConfig, i_dpValidator,
+	  tryLateralStepConfig (i_originalConfig, i_dpEndConfig,
+				i_nextDPEndConfig, i_dpValidator,
 				i_cfgValidator, i_int, i_nbSteps, io_lastConfig,
 				nextStepCfg, io_path);
 	}
       else
 	{
 	  // Try to append step DP with frontal orientation.
-	  tryAppendFrontalStepDP (i_dpEndConfig, i_nextDPEndConfig,
-				  i_dpValidator, i_cfgValidator, i_int,
-				  i_nbSteps, io_lastConfig, nextStepCfg,
+	  tryAppendFrontalStepDP (i_originalConfig, i_dpEndConfig,
+				  i_nextDPEndConfig, i_dpValidator,
+				  i_cfgValidator, i_int, i_nbSteps,
+				  io_lastConfig, nextStepCfg,
 				  io_path);
 	}
 
@@ -673,7 +678,8 @@ namespace kws
     }
 
     ktStatus Optimizer::
-    tryLateralStepConfig (const CkwsConfig& i_dpEndConfig,
+    tryLateralStepConfig (const CkwsConfig& i_originalConfig,
+			  const CkwsConfig& i_dpEndConfig,
 			  const CkwsConfig i_nextDPEndConfig,
 			  const CkwsValidatorDPCollisionShPtr&
 			  i_dpValidator,
@@ -685,21 +691,24 @@ namespace kws
 			  CkwsConfig& io_reorientedConfig,
 			  CkwsPathShPtr& io_path)
     {
-      if (KD_ERROR == nextStepConfig (io_lastConfig, i_dpEndConfig,
-				      i_nextDPEndConfig, LATERAL_ADJUSTED,
-				      i_cfgValidator, io_reorientedConfig))
+      if (KD_ERROR == nextStepConfig (i_originalConfig, io_lastConfig,
+				      i_dpEndConfig, i_nextDPEndConfig,
+				      LATERAL_ADJUSTED, i_cfgValidator,
+				      io_reorientedConfig))
 	{
 	  // Get next step configuration with original configuration.
-	  tryOriginalStepConfig (i_dpEndConfig, i_nextDPEndConfig, i_dpValidator,
+	  tryOriginalStepConfig (i_originalConfig, i_dpEndConfig,
+				 i_nextDPEndConfig, i_dpValidator,
 				 i_cfgValidator, i_int, i_nbSteps, io_lastConfig,
 				 io_reorientedConfig, io_path);
 	}
       else 
 	{
 	  // Try to append step DP with lateral orientation.
-	  tryAppendLateralStepDP (i_dpEndConfig, i_nextDPEndConfig,
-				  i_dpValidator, i_cfgValidator, i_int,
-				  i_nbSteps, io_lastConfig, io_reorientedConfig,
+	  tryAppendLateralStepDP (i_originalConfig, i_dpEndConfig,
+				  i_nextDPEndConfig, i_dpValidator,
+				  i_cfgValidator, i_int, i_nbSteps,
+				  io_lastConfig, io_reorientedConfig,
 				  io_path);
 	}
       
@@ -707,7 +716,8 @@ namespace kws
     }
 
     ktStatus Optimizer::
-    tryOriginalStepConfig (const CkwsConfig& i_dpEndConfig,
+    tryOriginalStepConfig (const CkwsConfig& i_originalConfig,
+			   const CkwsConfig& i_dpEndConfig,
 			   const CkwsConfig i_nextDPEndConfig,
 			   const CkwsValidatorDPCollisionShPtr&
 			   i_dpValidator,
@@ -719,20 +729,22 @@ namespace kws
 			   CkwsConfig& io_reorientedConfig,
 			   CkwsPathShPtr& io_path)
     {
-      nextStepConfig (io_lastConfig, i_dpEndConfig, i_nextDPEndConfig,
-		      ORIGINAL, i_cfgValidator, io_reorientedConfig);
+      nextStepConfig (i_originalConfig, io_lastConfig, i_dpEndConfig,
+		      i_nextDPEndConfig, ORIGINAL, i_cfgValidator,
+		      io_reorientedConfig);
       
-      // Try to append step DP with lateral orientation.
-      tryAppendOriginalStepDP (i_dpEndConfig, i_nextDPEndConfig,
-			       i_dpValidator, i_cfgValidator, i_int,
-			       i_nbSteps, io_lastConfig, io_reorientedConfig,
-			       io_path);
+      // Try to append step DP with original orientation.
+      tryAppendOriginalStepDP (i_originalConfig, i_dpEndConfig,
+			       i_nextDPEndConfig, i_dpValidator, i_cfgValidator,
+			       i_int, i_nbSteps, io_lastConfig,
+			       io_reorientedConfig, io_path);
       
       return KD_OK;
     }   
 
     ktStatus Optimizer::
-    tryAppendFrontalStepDP (const CkwsConfig& i_dpEndConfig,
+    tryAppendFrontalStepDP (const CkwsConfig& i_originalConfig,
+			    const CkwsConfig& i_dpEndConfig,
 			    const CkwsConfig i_nextDPEndConfig,
 			    const CkwsValidatorDPCollisionShPtr&
 			    i_dpValidator,
@@ -758,7 +770,8 @@ namespace kws
       if (!stepDP->isValid ())
 	{
 	  // Get next step configuration with lateral orientation.
-	  tryLateralStepConfig (i_dpEndConfig, i_nextDPEndConfig, i_dpValidator,
+	  tryLateralStepConfig (i_originalConfig, i_dpEndConfig,
+				i_nextDPEndConfig, i_dpValidator,
 				i_cfgValidator, i_int, i_nbSteps, io_lastConfig,
 				io_reorientedCfg, io_path);
 	}
@@ -778,7 +791,8 @@ namespace kws
     }
 
     ktStatus Optimizer::
-    tryAppendLateralStepDP (const CkwsConfig& i_dpEndConfig,
+    tryAppendLateralStepDP (const CkwsConfig& i_originalConfig,
+			    const CkwsConfig& i_dpEndConfig,
 			    const CkwsConfig i_nextDPEndConfig,
 			    const CkwsValidatorDPCollisionShPtr&
 			    i_dpValidator,
@@ -804,10 +818,11 @@ namespace kws
       if (!stepDP->isValid ())
 	{
 	  // Try to orient previous config laterallt and make new direct path.
-	  tryPreviousLateralStepConfig (i_dpEndConfig, i_nextDPEndConfig,
-					i_dpValidator, i_cfgValidator, i_int,
-					i_nbSteps, io_lastConfig,
-					io_reorientedCfg, io_path);
+	  tryPreviousLateralStepConfig (i_originalConfig, i_dpEndConfig,
+					i_nextDPEndConfig, i_dpValidator,
+					i_cfgValidator, i_int, i_nbSteps,
+					io_lastConfig, io_reorientedCfg,
+					io_path);
 	}
       else
 	{
@@ -825,7 +840,8 @@ namespace kws
     }
 
     ktStatus Optimizer::
-    tryPreviousLateralStepConfig (const CkwsConfig& i_dpEndConfig,
+    tryPreviousLateralStepConfig (const CkwsConfig& i_originalConfig,
+				  const CkwsConfig& i_dpEndConfig,
 				  const CkwsConfig i_nextDPEndConfig,
 				  const CkwsValidatorDPCollisionShPtr&
 				  i_dpValidator,
@@ -844,31 +860,33 @@ namespace kws
       // Replace it with one where last configuration is oriented
       // laterally.
       CkwsConfig lateralCfg (device ());
-      if (KD_ERROR == nextStepConfig (io_lastConfig, i_dpEndConfig,
-				      i_nextDPEndConfig, LATERAL_ADJUSTED,
-				      i_cfgValidator, lateralCfg))
+      if (KD_ERROR == nextStepConfig (i_originalConfig, io_lastConfig,
+				      i_dpEndConfig, i_nextDPEndConfig,
+				      LATERAL_ADJUSTED, i_cfgValidator,
+				      lateralCfg))
 	{
 	  hppDout (error, "Previous lateral configuration not valid.");
 	  return KD_OK;
 	}
       else
 	{
-	  tryAppendLateralStepDP (i_dpEndConfig, i_nextDPEndConfig,
-				  i_dpValidator, i_cfgValidator, i_int,
-				  i_nbSteps, io_lastConfig, lateralCfg,
-				  io_path);
+	  tryAppendLateralStepDP (i_originalConfig, i_dpEndConfig,
+				  i_nextDPEndConfig, i_dpValidator,
+				  i_cfgValidator, i_int, i_nbSteps,io_lastConfig,
+				  lateralCfg, io_path);
 
-	  tryAppendLateralStepDP (i_dpEndConfig, i_nextDPEndConfig,
-				  i_dpValidator, i_cfgValidator, i_int,
-				  i_nbSteps, io_lastConfig, io_reorientedConfig,
-				  io_path);
+	  tryAppendLateralStepDP (i_originalConfig, i_dpEndConfig,
+				  i_nextDPEndConfig, i_dpValidator,
+				  i_cfgValidator, i_int, i_nbSteps, io_lastConfig,
+				  io_reorientedConfig, io_path);
 	}
 	
       return KD_OK;
     }
 
     ktStatus Optimizer::
-    tryAppendOriginalStepDP (const CkwsConfig& i_dpEndConfig,
+    tryAppendOriginalStepDP (const CkwsConfig& i_originalConfig,
+			     const CkwsConfig& i_dpEndConfig,
 			     const CkwsConfig i_nextDPEndConfig,
 			     const CkwsValidatorDPCollisionShPtr&
 			     i_dpValidator,
