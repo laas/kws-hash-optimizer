@@ -863,6 +863,8 @@ namespace kws
     {
       // Remove last step direct path only if it inside the current
       // direct path.
+      hppDout (notice, "tryPreviousLateralConfig::i_int = " << i_int);
+
       if (i_int == 0)
 	{
 	  hppDout (warning, "cannot remove direct path.");
