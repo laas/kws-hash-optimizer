@@ -257,12 +257,15 @@ namespace kws
       CkwsConfig lastCfg = dpStartCfg;
       CkwsConfig nextDPEndCfg (device ());
       i_path->getConfiguration (i_int + 2, nextDPEndCfg);
+      CkwsConfig originalCfg (device ());
 
       while (i < nbSteps)
 	{
 	  hppDout (notice, "Appending step direct path " << i);
 
 	  // Reorient next configuration and append step direct path
+
+	  getOriginalConfig (i_path, i_int, i, nbSteps, originalCfg);
 
 	  if (KD_ERROR == appendStepDP (dpEndCfg, nextDPEndCfg, i_dpValidator,
 					i_cfgValidator, i, nbSteps, lastCfg,
@@ -510,6 +513,28 @@ namespace kws
       return KD_OK;
     }
 
+    ktStatus Optimizer::getOriginalConfig (const CkwsPathShPtr& i_path,
+					   unsigned int i_dpIndexInt,
+					   unsigned int i_stepIndexInt,
+					   unsigned int i_stepNumberInt,
+					   CkwsConfig& o_config)
+    {
+      CkwsDirectPathShPtr directPath 
+	= CkwsDirectPath::createCopy (i_path->directPath (i_dpIndexInt));
+      
+      if (i_stepIndexInt < i_stepNumberInt - 1)
+	{
+	  directPath->getConfigAtDistance (i_stepIndexInt * stepSize (),
+					   o_config);
+	}
+      else
+	{
+	  directPath->getConfigAtEnd (o_config);
+	}
+      
+      return KD_OK;
+    }
+
     ktStatus Optimizer::nextStepConfig (const CkwsConfig& i_beginConfig,
 					const CkwsConfig& i_endConfig,
 					const CkwsConfig& i_nextDPEndConfig,
@@ -600,7 +625,7 @@ namespace kws
 	}
       else return KD_OK;
     }
-    
+
     ktStatus Optimizer::
     appendStepDP (const CkwsConfig& i_dpEndConfig,
 		  const CkwsConfig& i_nextDPEndConfig,

@@ -149,6 +149,13 @@ namespace kws
 				       unsigned int i_int,
 				       CkwsConfig& io_reorientedConfig);
 
+      // FIXME: doxygen
+      virtual ktStatus getOriginalConfig (const CkwsPathShPtr& i_path,
+					  unsigned int i_dpIndexInt,
+					  unsigned int i_stepIndexInt,
+					  unsigned int i_stepNumberInt,
+					  CkwsConfig& o_config);	
+
       // FIXME {doxygen}
       virtual ktStatus nextStepConfig (const CkwsConfig& i_beginConfig,
 				       const CkwsConfig& i_endConfig,
