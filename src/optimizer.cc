@@ -778,10 +778,11 @@ namespace kws
       
       if (!stepDP->isValid ())
 	{
-	  // Get next step configuration with original orientation.
-	  tryOriginalStepConfig (i_dpEndConfig, i_nextDPEndConfig, i_dpValidator,
-				 i_cfgValidator, i_int, i_nbSteps, io_lastConfig,
-				 io_reorientedCfg, io_path);
+	  // Try to orient previous config laterallt and make new direct path.
+	  tryPreviousLateralStepConfig (i_dpEndConfig, i_nextDPEndConfig,
+					i_dpValidator, i_cfgValidator, i_int,
+					i_nbSteps, io_lastConfig,
+					io_reorientedCfg, io_path);
 	}
       else
 	{
@@ -795,6 +796,49 @@ namespace kws
 	  io_lastConfig = io_reorientedCfg;
 	}
       
+      return KD_OK;
+    }
+
+    ktStatus Optimizer::
+    tryPreviousLateralStepConfig (const CkwsConfig& i_dpEndConfig,
+				  const CkwsConfig i_nextDPEndConfig,
+				  const CkwsValidatorDPCollisionShPtr&
+				  i_dpValidator,
+				  const CkwsValidatorCfgCollisionShPtr&
+				  i_cfgValidator,
+				  unsigned int i_int,
+				  const unsigned int i_nbSteps,
+				  CkwsConfig& io_lastConfig,
+				  CkwsConfig& io_reorientedConfig,
+				  CkwsPathShPtr& io_path)
+    {
+      // Remove last direct path.
+      io_path->extractToDirectPath (io_path->countDirectPaths () - 1);
+      io_path->getConfigAtEnd (io_lastConfig);
+
+      // Replace it with one where last configuration is oriented
+      // laterally.
+      CkwsConfig lateralCfg (device ());
+      if (KD_ERROR == nextStepConfig (io_lastConfig, i_dpEndConfig,
+				      i_nextDPEndConfig, LATERAL_ADJUSTED,
+				      i_cfgValidator, lateralCfg))
+	{
+	  hppDout (error, "Previous lateral configuration not valid.");
+	  return KD_OK;
+	}
+      else
+	{
+	  tryAppendLateralStepDP (i_dpEndConfig, i_nextDPEndConfig,
+				  i_dpValidator, i_cfgValidator, i_int,
+				  i_nbSteps, io_lastConfig, lateralCfg,
+				  io_path);
+
+	  tryAppendLateralStepDP (i_dpEndConfig, i_nextDPEndConfig,
+				  i_dpValidator, i_cfgValidator, i_int,
+				  i_nbSteps, io_lastConfig, io_reorientedConfig,
+				  io_path);
+	}
+	
       return KD_OK;
     }
 
