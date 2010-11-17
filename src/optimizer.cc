@@ -821,19 +821,53 @@ namespace kws
       
       if (!stepDP->isValid ())
 	{
-	  // Try to orient previous config lateral and make new direct path.
-	  if (KD_ERROR ==
-	      tryPreviousLateralStepConfig (i_originalConfig, i_dpEndConfig,
-					    i_nextDPEndConfig, i_dpValidator,
-					    i_cfgValidator, i_int, i_nbSteps,
-					    io_lastConfig, io_reorientedCfg,
-					    io_path))
+	  // Flip configuration to try other lateral orientation and
+	  // make new direct path.
+	  hppDout (warning, "Trying step DP with flipped configuration.");
+
+	  io_reorientedCfg.dofValue (5, io_reorientedCfg.dofValue (5)
+				     + M_PI);
+	  
+	  stepDP = linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
+
+	  if (!stepDP)
 	    {
-	      tryOriginalStepConfig (i_originalConfig, i_dpEndConfig,
-				     i_nextDPEndConfig, i_dpValidator,
-				     i_cfgValidator, i_int, i_nbSteps,
-				     io_lastConfig, io_reorientedCfg,
-				     io_path);
+	      hppDout (error, "StepDP was not made.");
+	      return KD_ERROR;
+	    }
+	  else i_dpValidator->validate (*stepDP);
+
+	  if (!stepDP->isValid ())
+	    {
+	      // Try to orient previous config lateral and make new direct path.
+	      io_reorientedCfg.dofValue (5, io_reorientedCfg.dofValue (5)
+					 + M_PI);
+	      
+	      if (KD_ERROR ==
+		  tryPreviousLateralStepConfig (i_originalConfig, i_dpEndConfig,
+						i_nextDPEndConfig, i_dpValidator,
+						i_cfgValidator, i_int, i_nbSteps,
+						io_lastConfig, io_reorientedCfg,
+						io_path))
+		{
+		  tryOriginalStepConfig (i_originalConfig, i_dpEndConfig,
+					 i_nextDPEndConfig, i_dpValidator,
+					 i_cfgValidator, i_int, i_nbSteps,
+					 io_lastConfig, io_reorientedCfg,
+					 io_path);
+		}
+	    }
+	  else
+	    {
+	      // Append step direct path with lateral orientation.
+	      if (KD_ERROR == io_path->appendDirectPath (stepDP))
+		{
+		  hppDout (error, "Could not append lateral step direct path " 
+			   << i_int);
+		  return KD_ERROR;
+		}
+	      io_lastConfig = io_reorientedCfg;
+	      lateral_angle_ = - lateral_angle_;
 	    }
 	}
       else
