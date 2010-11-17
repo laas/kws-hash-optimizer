@@ -850,6 +850,7 @@ namespace kws
 						io_lastConfig, io_reorientedCfg,
 						io_path))
 		{
+		  hppDout (notice, "Trying original config.");
 		  tryOriginalStepConfig (i_originalConfig, i_dpEndConfig,
 					 i_nextDPEndConfig, i_dpValidator,
 					 i_cfgValidator, i_int, i_nbSteps,
@@ -926,11 +927,13 @@ namespace kws
 	}
       else
 	{
+	  hppDout (notice, "Appending previous lateral step DP.");
 	  tryAppendLateralStepDP (i_originalConfig, i_dpEndConfig,
 				  i_nextDPEndConfig, i_dpValidator,
 				  i_cfgValidator, i_int, i_nbSteps,io_lastConfig,
 				  lateralCfg, io_path);
-
+	  
+	  hppDout (notice, "Appending lateral step DP.");
 	  tryAppendLateralStepDP (i_originalConfig, i_dpEndConfig,
 				  i_nextDPEndConfig, i_dpValidator,
 				  i_cfgValidator, i_int, i_nbSteps, io_lastConfig,
