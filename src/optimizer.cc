@@ -613,16 +613,16 @@ namespace kws
 		   const CkwsConfig& i_endConfig,
 		   const CkwsValidatorDPCollisionShPtr& i_dpValidator)
     {
-      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
-      CkwsDirectPathShPtr stepDP 
-	= linearSM->makeDirectPath (i_beginConfig, i_endConfig);
-      
-      if (!stepDP)
+      if (i_beginConfig == i_endConfig)
 	{
 	  hppDout (error, "StepDP was not made.");
 	  return KD_ERROR;
 	}
-      else i_dpValidator->validate (*stepDP);
+
+      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
+      CkwsDirectPathShPtr stepDP 
+	= linearSM->makeDirectPath (i_beginConfig, i_endConfig);
+      i_dpValidator->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
@@ -760,16 +760,16 @@ namespace kws
 			    CkwsConfig& io_reorientedCfg,
 			    CkwsPathShPtr& io_path)
     {
-      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
-      CkwsDirectPathShPtr stepDP 
-	= linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
-
-      if (!stepDP)
+      if (io_lastConfig == io_reorientedCfg)
 	{
 	  hppDout (error, "StepDP was not made.");
 	  return KD_ERROR;
 	}
-      else i_dpValidator->validate (*stepDP);
+
+      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
+      CkwsDirectPathShPtr stepDP 
+	= linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
+      i_dpValidator->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
@@ -808,34 +808,35 @@ namespace kws
 			    CkwsConfig& io_reorientedCfg,
 			    CkwsPathShPtr& io_path)
     {
-      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
-      CkwsDirectPathShPtr stepDP 
-	= linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
-
-      if (!stepDP)
+      if (io_lastConfig == io_reorientedCfg)
 	{
 	  hppDout (error, "StepDP was not made.");
 	  return KD_ERROR;
 	}
-      else i_dpValidator->validate (*stepDP);
+      
+      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
+      CkwsDirectPathShPtr stepDP 
+	= linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
+      i_dpValidator->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
 	  // Flip configuration to try other lateral orientation and
 	  // make new direct path.
 	  hppDout (warning, "Trying step DP with flipped configuration.");
-
+	  
 	  io_reorientedCfg.dofValue (5, io_reorientedCfg.dofValue (5)
 				     + M_PI);
-	  
-	  stepDP = linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
 
-	  if (!stepDP)
+	  if (io_lastConfig == io_reorientedCfg)
 	    {
 	      hppDout (error, "StepDP was not made.");
 	      return KD_ERROR;
 	    }
-	  else i_dpValidator->validate (*stepDP);
+
+	  CkwsDirectPathShPtr stepDP 
+	    = linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
+	  i_dpValidator->validate (*stepDP);
 
 	  if (!stepDP->isValid ())
 	    {
@@ -957,16 +958,16 @@ namespace kws
 			     CkwsConfig& io_reorientedCfg,
 			     CkwsPathShPtr& io_path)
     {
-      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
-      CkwsDirectPathShPtr stepDP 
-	= linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
-
-      if (!stepDP)
+      if (io_lastConfig == io_reorientedCfg)
 	{
 	  hppDout (error, "StepDP was not made.");
 	  return KD_ERROR;
 	}
-      else i_dpValidator->validate (*stepDP);
+
+      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
+      CkwsDirectPathShPtr stepDP 
+	= linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
+      i_dpValidator->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
