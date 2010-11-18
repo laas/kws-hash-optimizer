@@ -613,7 +613,7 @@ namespace kws
 		   const CkwsConfig& i_endConfig,
 		   const CkwsValidatorDPCollisionShPtr& i_dpValidator)
     {
-      if (i_beginConfig == i_endConfig)
+      if (i_beginConfig.isEquivalent (i_endConfig))
 	{
 	  hppDout (error, "StepDP was not made.");
 	  return KD_ERROR;
@@ -760,7 +760,7 @@ namespace kws
 			    CkwsConfig& io_reorientedCfg,
 			    CkwsPathShPtr& io_path)
     {
-      if (io_lastConfig == io_reorientedCfg)
+      if (io_lastConfig.isEquivalent (io_reorientedCfg))
 	{
 	  hppDout (error, "StepDP was not made.");
 	  return KD_ERROR;
@@ -808,7 +808,7 @@ namespace kws
 			    CkwsConfig& io_reorientedCfg,
 			    CkwsPathShPtr& io_path)
     {
-      if (io_lastConfig == io_reorientedCfg)
+      if (io_lastConfig.isEquivalent (io_reorientedCfg))
 	{
 	  hppDout (error, "StepDP was not made.");
 	  return KD_ERROR;
@@ -828,7 +828,7 @@ namespace kws
 	  io_reorientedCfg.dofValue (5, io_reorientedCfg.dofValue (5)
 				     + M_PI);
 
-	  if (io_lastConfig == io_reorientedCfg)
+	  if (io_lastConfig.isEquivalent (io_reorientedCfg))
 	    {
 	      hppDout (error, "StepDP was not made.");
 	      return KD_ERROR;
@@ -958,7 +958,7 @@ namespace kws
 			     CkwsConfig& io_reorientedCfg,
 			     CkwsPathShPtr& io_path)
     {
-      if (io_lastConfig == io_reorientedCfg)
+      if (io_lastConfig.isEquivalent (io_reorientedCfg))
 	{
 	  hppDout (error, "StepDP was not made.");
 	  return KD_ERROR;
