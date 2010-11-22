@@ -266,7 +266,8 @@ namespace kws
 
       while (i < nbSteps)
 	{
-	  hppDout (notice, "Appending step direct path " << i);
+	  hppDout (notice, "Appending step direct path " << i
+		   << " of " << nbSteps - 1);
 
 	  // Reorient next configuration and append step direct path
 
@@ -833,6 +834,22 @@ namespace kws
 	  io_reorientedCfg.dofValue (5, io_reorientedCfg.dofValue (5) 
 				     - M_PI);
 	}
+      
+      hppDout (notice, "last config: " << incindent << iendl
+	       << io_lastConfig.dofValue (0) << iendl
+	       << io_lastConfig.dofValue (1) << iendl
+	       << io_lastConfig.dofValue (2) << iendl
+	       << io_lastConfig.dofValue (3) << iendl
+	       << io_lastConfig.dofValue (4) << iendl
+	       << io_lastConfig.dofValue (5) << decindent);
+
+      hppDout (notice, "reoriented config: " << incindent << iendl
+	       << io_reorientedCfg.dofValue (0) << iendl
+	       << io_reorientedCfg.dofValue (1) << iendl
+	       << io_reorientedCfg.dofValue (2) << iendl
+	       << io_reorientedCfg.dofValue (3) << iendl
+	       << io_reorientedCfg.dofValue (4) << iendl
+	       << io_reorientedCfg.dofValue (5) << decindent);
       
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
