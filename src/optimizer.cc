@@ -808,10 +808,30 @@ namespace kws
 			    CkwsConfig& io_reorientedCfg,
 			    CkwsPathShPtr& io_path)
     {
+      // Check if begin and end configurations are the same.
       if (io_lastConfig.isEquivalent (io_reorientedCfg))
 	{
 	  hppDout (error, "StepDP was not made.");
 	  return KD_ERROR;
+	}
+
+      // Check if begin and end configurations are facing opposite
+      // sides and rotate end configuration in this case.
+      double angleDiff =
+	io_reorientedCfg.dofValue (5) - io_lastConfig.dofValue (5);
+
+      if (angleDiff < 0)
+	angleDiff += 2 * M_PI; 
+	  
+      if (angleDiff > 2 * M_PI)
+	angleDiff -= 2 * M_PI;
+	
+      if  (angleDiff == M_PI)
+	{
+	  hppDout (warning,
+		   "Singularity detected, rotating end configuration.");
+	  io_reorientedCfg.dofValue (5, io_reorientedCfg.dofValue (5) 
+				     - M_PI);
 	}
       
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
