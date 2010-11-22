@@ -291,6 +291,13 @@ namespace kws
 			       CkwsConfig& io_reorientedCfg,
 			       CkwsPathShPtr& io_path);
 
+      // FIXME: doxygen
+      virtual ktStatus
+      appendLastStepDP (CkwsConfig& i_dpEndConfig,
+			const CkwsValidatorDPCollisionShPtr&
+			i_dpValidator,
+			CkwsPathShPtr& io_path);
+	
       /// \brief Constructor
       ///
       /// \param i_nbLoops Maximum number of loops to be run by
