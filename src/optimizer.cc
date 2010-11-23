@@ -344,6 +344,7 @@ namespace kws
       CkwsDirectPathShPtr ithNextDP 
 	= CkwsDirectPath::createCopy (i_path->directPath (i_int + 1));
 
+      CkwsConfig ithDPStartCfg (device ());
       CkwsConfig ithDPEndCfg (device ());
       CkwsConfig ithNextDPEndCfg (device ());
       i_path->getConfiguration (i_int, ithDPStartCfg);
