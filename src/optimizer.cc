@@ -583,7 +583,7 @@ namespace kws
 	}
       else if (i_orientation == ORIGINAL)
 	{
-	  // FIXME: find a way to retrieve original configuration.
+	  o_config = i_originalConfig;
 	  adjustOriginalConfig (i_originalConfig, i_endConfig, o_config); 
 	}
       
