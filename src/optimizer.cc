@@ -374,13 +374,6 @@ namespace kws
 				    i_dpValidator, i_cfgValidator, i_int,
 				    o_config);
 	}
-      else
-	{
-	  // Verify step direct path after direct path end configuration.
-	  tryMakeFrontalDPForEndConfig (i_path, ithDPEndCfg, ithNextDPEndCfg,
-					i_dpValidator, i_cfgValidator, i_int,
-					o_config);
-	}
 
       return KD_OK;
     }
@@ -409,19 +402,9 @@ namespace kws
 	  // Keep original configuration.
 	  io_reorientedConfig = i_originalConfig;
 	  rotateDPEndConfig (i_path, i_int, io_reorientedConfig);
-
-	  return KD_OK;
 	}
-      else 
-	{
-	  // Verify step direct path after direct path end configuration.
-	  tryMakeOrthogonalDPForEndConfig (i_path, i_originalConfig,
-					   i_nextDPEndConfig, i_dpValidator,
-					   i_cfgValidator, i_int,
-					   io_reorientedConfig);
 
-	  return KD_OK;
-	}
+      return KD_OK;
     }
 
     ktStatus Optimizer::
