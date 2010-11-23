@@ -226,10 +226,6 @@ namespace kws
 	  // Try to reorient direct path end config.
 	  reorientDPEndConfig (i_path, i_dpValidator, i_cfgValidator, i_int,
 			       dpEndCfg);
-	  
-	  // Keep original direct path end configuration modulo Pi to
-	  // make it point towards the end of the next direct path.
-	  // rotateDPEndConfig (i_path, i_int, dpEndCfg);
 
 	  // Append modified direct path
 	  CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
@@ -348,20 +344,6 @@ namespace kws
       CkwsDirectPathShPtr ithNextDP 
 	= CkwsDirectPath::createCopy (i_path->directPath (i_int + 1));
 
-      // unsigned int ithNextNbSteps = (int)(ithNextDP->length () / stepSize ());
-
-      // // Simply rotate by k*PI if next direct path is too small. 
-      // if (ithNextNbSteps < minStepsNb ())
-      // 	{
-      // 	  hppDout (notice, "Rotating direct path end configuration by k*PI" 
-      // 		   << i_int);
-	  
-      // 	  rotateDPEndConfig (i_path, i_int, o_config);
-	  
-      // 	  return KD_OK;
-      // 	}
-
-      CkwsConfig ithDPStartCfg (device ());
       CkwsConfig ithDPEndCfg (device ());
       CkwsConfig ithNextDPEndCfg (device ());
       i_path->getConfiguration (i_int, ithDPStartCfg);
