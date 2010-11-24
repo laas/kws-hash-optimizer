@@ -748,10 +748,13 @@ namespace kws
 	{
 	  hppDout (warning,
 		   "Singularity detected, frontal step direct path not valid.");
+	  
 	  tryLateralStepConfig (i_originalConfig, i_dpEndConfig,
 				i_nextDPEndConfig, i_dpValidator,
 				i_cfgValidator, i_int, i_nbSteps, io_lastConfig,
 				io_reorientedCfg, io_path);
+	  
+	  return KD_OK;
 	}
       
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
