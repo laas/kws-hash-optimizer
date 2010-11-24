@@ -733,6 +733,24 @@ namespace kws
 	  return KD_ERROR;
 	}
 
+      // Check if begin and end configurations are facing opposite
+      // sides and return error in this case.
+      double angleDiff =
+	io_reorientedCfg.dofValue (5) - io_lastConfig.dofValue (5);
+
+      if (angleDiff < 0)
+	angleDiff += 2 * M_PI; 
+	  
+      if (angleDiff > 2 * M_PI)
+	angleDiff -= 2 * M_PI;
+	
+      if  (angleDiff == M_PI)
+	{
+	  hppDout (error,
+		   "Singularity detected, direct path not valid.");
+	  return KD_ERROR;
+	}
+      
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
 	= linearSM->makeDirectPath (io_lastConfig, io_reorientedCfg);
