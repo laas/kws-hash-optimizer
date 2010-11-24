@@ -271,6 +271,8 @@ namespace kws
 	}
       
       // Append last direct path.
+      hppDout (notice, "Appending step direct path " << i 
+	       << " of " << nbSteps - 1);
       if (KD_ERROR == appendLastStepDP (i_path, i_dpValidator, i_cfgValidator,
 					i_int, io_path))
 	{
@@ -356,12 +358,7 @@ namespace kws
       i_cfgValidator->validate (o_config);
 
       if (!o_config.isValid ())
-	{
-	  hppDout (warning, "reorient direct path end config frontally failed "
-		   << i_int);
-	
 	  return KD_ERROR;
-	}
 
       return KD_OK;
     }
@@ -384,7 +381,7 @@ namespace kws
       if (!io_reorientedConfig.isValid ())
       	{
       	  hppDout (warning,
-      		   "Orient lateral direct path end config failed" 
+      		   "Lateral orientation failed, rotating original configuration " 
       		   << i_int);
 	
       	  // Keep original configuration.
@@ -394,6 +391,8 @@ namespace kws
       else
 	{
 	  // Try to append lateral step direct path.
+	  hppDout (notice, "Trying to append lateral step direct path "
+		   << i_int);
 	  tryAppendLateralLastStepDP (i_path, i_originalConfig, i_dpValidator,
 				      i_cfgValidator, i_int, io_reorientedConfig,
 				      io_path);
@@ -438,6 +437,7 @@ namespace kws
 	  hppDout (warning,
 		   "Singularity detected, frontal step direct path not valid.");
 	  
+	  hppDout (notice, "Trying lateral orientation " << i_int);
 	  tryOrientLateralDPEndConfig (i_path, i_originalConfig, i_dpValidator,
 				       i_cfgValidator, i_int,
 				       io_reorientedConfig, io_path);
@@ -453,6 +453,9 @@ namespace kws
       if (!stepDP->isValid ())
 	{
 	  // Try lateral orientation for direct path end configuration.
+	  hppDout (warning,
+		   " Step direct path not valid, trying lateral orientation"
+		   << i_int);
 	  tryOrientLateralDPEndConfig (i_path, i_originalConfig, i_dpValidator,
 				       i_cfgValidator, i_int,
 				       io_reorientedConfig, io_path);
@@ -547,7 +550,9 @@ namespace kws
 						i_cfgValidator,	i_int, lastCfg,
 						io_reorientedConfig, io_path))
 		{
-		  hppDout (notice, "Trying original config.");
+		  hppDout (notice,
+			   "Lateral orientation invalid, trying original config "
+			   << i_int);
 		  return KD_ERROR;
 		  // tryOriginalStepConfig (i_originalConfig, i_dpEndConfig,
 		  // 			 i_nextDPEndConfig, i_dpValidator,
@@ -1098,12 +1103,18 @@ namespace kws
 						   i_cfgValidator, i_int,
 						   dpEndCfg))
 	{
+	  hppDout (warning,
+		   "Frontal orientation failed, trying lateral orientation "
+		   << i_int);
 	  tryOrientLateralDPEndConfig (i_path, originalCfg, i_dpValidator,
 				       i_cfgValidator, i_int, dpEndCfg,
 				       io_path);
 	}
       else
 	{
+	  hppDout (notice,
+		   "Trying to append frontal step direct path "
+		   << i_int);
 	  tryAppendFrontalLastStepDP (i_path, originalCfg, i_dpValidator,
 				      i_cfgValidator, i_int, dpEndCfg, io_path);
 	}
