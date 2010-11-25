@@ -61,12 +61,21 @@ namespace kws
       double lateralAngle ();
 
       /// \brief Get shared pointer to input path to be optimized
-      /// i_path_;
+      /// i_path_
       CkwsPathShPtr inPath () const;
 
       /// \brief Get shared pointer to optimized path under
       /// construction o_path_
       CkwsPathShPtr outPath ();
+
+      /// \brief Get shared pointer to direct path collision validator
+      /// dp_validator_
+      CkwsValidatorDPCollisionShPtr dpValidator () const;
+
+      /// \brief Get shared pointer to direct path collision validator
+      /// cfg_validator_
+      CkwsValidatorCfgCollisionShPtr cfgValidator () const;
+                                        
 
     protected:
       // FIXME {doxygen}
@@ -95,14 +104,11 @@ namespace kws
       ///
       /// \return KD_OK | KD_ERROR
       virtual ktStatus
-      retrieveValidators (CkwsValidatorDPCollisionShPtr& o_dpValidator,
-			  CkwsValidatorCfgCollisionShPtr& o_cfgValidator);
+      retrieveValidators ();
 
       // FIXME {doxygen}
       virtual ktStatus
-      appendHashedDP (const CkwsValidatorDPCollisionShPtr& i_dpValidator,
-		      const CkwsValidatorCfgCollisionShPtr& i_cfgValidator,
-		      unsigned int i_int);
+      appendHashedDP (unsigned int i_int);
 
       // FIXME {doxygen}
       virtual ktStatus
@@ -111,40 +117,24 @@ namespace kws
 
       // FIXME {doxygen}
       virtual ktStatus
-      tryOrientFrontalDPEndConfig (const CkwsValidatorDPCollisionShPtr&
-				   i_dpValidator,
-				   const CkwsValidatorCfgCollisionShPtr&
-				   i_cfgValidator,
-				   unsigned int i_int,
+      tryOrientFrontalDPEndConfig (unsigned int i_int,
 				   CkwsConfig& o_config);
 
       // FIXME {doxygen}
       virtual ktStatus
       tryOrientLateralDPEndConfig (const CkwsConfig& i_originalConfig,
-				   const CkwsValidatorDPCollisionShPtr&
-				   i_dpValidator,
-				   const CkwsValidatorCfgCollisionShPtr&
-				   i_cfgValidator,
 				   unsigned int i_int,
 				   CkwsConfig& io_reorientedConfig);
 
       // FIXME {doxygen}
       virtual ktStatus
       tryAppendFrontalLastStepDP (const CkwsConfig& i_originalConfig,
-				  const CkwsValidatorDPCollisionShPtr&
-				  i_dpValidator,
-				  const CkwsValidatorCfgCollisionShPtr&
-				  i_cfgValidator,
 				  unsigned int i_int,
 				  CkwsConfig& io_reorientedConfig);
 
       // FIXME {doxygen}
       virtual ktStatus
       tryAppendLateralLastStepDP (const CkwsConfig& i_originalConfig,
-				  const CkwsValidatorDPCollisionShPtr&
-				  i_dpValidator,
-				  const CkwsValidatorCfgCollisionShPtr&
-				  i_cfgValidator,
 				  unsigned int i_int,
 				  CkwsConfig& io_reorientedConfig);
 
@@ -159,8 +149,6 @@ namespace kws
 				       const CkwsConfig& i_beginConfig,
 				       const CkwsConfig& i_endConfig,
 				       unsigned int i_orientation,
-				       const CkwsValidatorCfgCollisionShPtr&
-				       i_cfgValidator,
 				       CkwsConfig& o_config);
       
       // FIXME {doxygen}
@@ -178,17 +166,13 @@ namespace kws
       // FIXME {doxygen}
       virtual ktStatus
       tryMakeStepDP (const CkwsConfig& i_beginConfig,
-		     const CkwsConfig& i_endConfig,
-		     const CkwsValidatorDPCollisionShPtr& i_dpValidator);
+		     const CkwsConfig& i_endConfig);
+		     
 	
       // FIXME {doxygen}
       virtual ktStatus
       appendStepDP (const CkwsConfig& i_originalConfig,
 		    const CkwsConfig& i_dpEndConfig,
-		    const CkwsValidatorDPCollisionShPtr&
-		    i_dpValidator,
-		    const CkwsValidatorCfgCollisionShPtr&
-		    i_cfgValidator,
 		    unsigned int i_int,
 		    CkwsConfig& io_lastConfig);
 
@@ -196,10 +180,6 @@ namespace kws
       virtual ktStatus
       tryLateralStepConfig (const CkwsConfig& i_originalConfig,
 			    const CkwsConfig& i_dpEndConfig,
-			    const CkwsValidatorDPCollisionShPtr&
-			    i_dpValidator,
-			    const CkwsValidatorCfgCollisionShPtr&
-			    i_cfgValidator,
 			    unsigned int i_int,
 			    CkwsConfig& io_lastConfig,
 			    CkwsConfig& io_reorientedConfig);
@@ -208,10 +188,6 @@ namespace kws
       virtual ktStatus
       tryOriginalStepConfig (const CkwsConfig& i_originalConfig,
 			     const CkwsConfig& i_dpEndConfig,
-			     const CkwsValidatorDPCollisionShPtr&
-			     i_dpValidator,
-			     const CkwsValidatorCfgCollisionShPtr&
-			     i_cfgValidator,
 			     unsigned int i_int,
 			     CkwsConfig& io_lastConfig,
 			     CkwsConfig& io_reorientedConfig);
@@ -220,10 +196,6 @@ namespace kws
       virtual ktStatus
       tryAppendFrontalStepDP (const CkwsConfig& i_originalConfig,
 			      const CkwsConfig& i_dpEndConfig,
-			      const CkwsValidatorDPCollisionShPtr&
-			      i_dpValidator,
-			      const CkwsValidatorCfgCollisionShPtr&
-			      i_cfgValidator,
 			      unsigned int i_int,
 			      CkwsConfig& io_lastConfig,
 			      CkwsConfig& io_reorientedCfg);
@@ -232,10 +204,6 @@ namespace kws
       virtual ktStatus
       tryAppendLateralStepDP (const CkwsConfig& i_originalConfig,
 			      const CkwsConfig& i_dpEndConfig,
-			      const CkwsValidatorDPCollisionShPtr&
-			      i_dpValidator,
-			      const CkwsValidatorCfgCollisionShPtr&
-			      i_cfgValidator,
 			      unsigned int i_int,
 			      CkwsConfig& io_lastConfig,
 			      CkwsConfig& io_reorientedCfg);
@@ -244,10 +212,6 @@ namespace kws
       virtual ktStatus
       tryPreviousLateralStepConfig (const CkwsConfig& i_originalConfig,
 				    const CkwsConfig& i_dpEndConfig,
-				    const CkwsValidatorDPCollisionShPtr&
-				    i_dpValidator,
-				    const CkwsValidatorCfgCollisionShPtr&
-				    i_cfgValidator,
 				    unsigned int i_int,
 				    CkwsConfig& io_lastConfig,
 				    CkwsConfig& io_reorientedConfig);
@@ -256,10 +220,6 @@ namespace kws
       virtual ktStatus
       tryPreviousOriginalStepConfig (const CkwsConfig& i_originalConfig,
 				     const CkwsConfig& i_dpEndConfig,
-				     const CkwsValidatorDPCollisionShPtr&
-				     i_dpValidator,
-				     const CkwsValidatorCfgCollisionShPtr&
-				     i_cfgValidator,
 				     unsigned int i_int,
 				     CkwsConfig& io_lastConfig,
 				     CkwsConfig& io_reorientedConfig);
@@ -268,19 +228,13 @@ namespace kws
       // FIXME: doxygen
       virtual ktStatus
       tryAppendOriginalStepDP (const CkwsConfig& i_originalConfig,
-			       const CkwsValidatorDPCollisionShPtr&
-			       i_dpValidator,
-			       const CkwsValidatorCfgCollisionShPtr&
-			       i_cfgValidator,
 			       unsigned int i_int,
 			       CkwsConfig& io_lastConfig,
 			       CkwsConfig& io_reorientedCfg);
 
       // FIXME: doxygen
       virtual ktStatus
-      appendLastStepDP (const CkwsValidatorDPCollisionShPtr& i_dpValidator,
-			const CkwsValidatorCfgCollisionShPtr& i_cfgValidator,
-			unsigned int i_int);
+      appendLastStepDP (unsigned int i_int);
       
       /// \brief Constructor
       ///
@@ -306,6 +260,10 @@ namespace kws
       CkwsPathShPtr i_path_;
 
       CkwsPathShPtr o_path_;
+      
+      CkwsValidatorDPCollisionShPtr dp_validator_;
+      
+      CkwsValidatorCfgCollisionShPtr cfg_validator_;
 
       OptimizerWkPtr optimizer_;
     };
