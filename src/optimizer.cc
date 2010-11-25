@@ -1056,6 +1056,8 @@ namespace kws
 				   CkwsConfig& io_reorientedConfig,
 				   CkwsPathShPtr& io_path)
     {
+      hppDout (notice, " try previous original step config " << i_int);
+
       // Remove last step direct path only if it inside the current
       // direct path.
       if (i_int == 0)
