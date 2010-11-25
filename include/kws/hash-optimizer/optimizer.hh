@@ -265,8 +265,21 @@ namespace kws
  
       // FIXME: doxygen
       virtual ktStatus
+      tryPreviousOriginalStepConfig (const CkwsConfig& i_originalConfig,
+				     const CkwsConfig& i_dpEndConfig,
+				     const CkwsValidatorDPCollisionShPtr&
+				     i_dpValidator,
+				     const CkwsValidatorCfgCollisionShPtr&
+				     i_cfgValidator,
+				     unsigned int i_int,
+				     CkwsConfig& io_lastConfig,
+				     CkwsConfig& io_reorientedConfig,
+				     CkwsPathShPtr& io_path);
+      
+
+      // FIXME: doxygen
+      virtual ktStatus
       tryAppendOriginalStepDP (const CkwsConfig& i_originalConfig,
-			       const CkwsConfig& i_dpEndConfig,
 			       const CkwsValidatorDPCollisionShPtr&
 			       i_dpValidator,
 			       const CkwsValidatorCfgCollisionShPtr&
