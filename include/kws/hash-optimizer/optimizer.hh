@@ -81,7 +81,10 @@ namespace kws
       /// \brief Get shared pointer to direct path collision validator
       /// cfg_validator_
       CkwsValidatorCfgCollisionShPtr cfgValidator () const;
-                                        
+
+      /// \brief Get original configuration for current step direct
+      /// path.
+      CkwsConfig originalConfig () const;
 
     protected:
       // FIXME {doxygen}
@@ -128,38 +131,27 @@ namespace kws
 
       // FIXME {doxygen}
       virtual ktStatus
-      tryOrientLateralDPEndConfig (const CkwsConfig& i_originalConfig,
-				   unsigned int i_int,
+      tryOrientLateralDPEndConfig (unsigned int i_int,
 				   CkwsConfig& io_reorientedConfig);
 
       // FIXME {doxygen}
       virtual ktStatus
-      tryAppendFrontalLastStepDP (const CkwsConfig& i_originalConfig,
-				  unsigned int i_int,
+      tryAppendFrontalLastStepDP (unsigned int i_int,
 				  CkwsConfig& io_reorientedConfig);
 
       // FIXME {doxygen}
       virtual ktStatus
-      tryAppendLateralLastStepDP (const CkwsConfig& i_originalConfig,
-				  unsigned int i_int,
+      tryAppendLateralLastStepDP (unsigned int i_int,
 				  CkwsConfig& io_reorientedConfig);
 
-      // FIXME: doxygen
-      virtual ktStatus getOriginalConfig (unsigned int i_dpIndexInt,
-					  unsigned int i_stepIndexInt,
-					  unsigned int i_stepNumberInt,
-					  CkwsConfig& o_config);	
-
       // FIXME {doxygen}
-      virtual ktStatus nextStepConfig (const CkwsConfig& i_originalConfig,
-				       const CkwsConfig& i_endConfig,
+      virtual ktStatus nextStepConfig (const CkwsConfig& i_endConfig,
 				       unsigned int i_orientation,
 				       CkwsConfig& o_config);
 
       // FIXME {doxygen}
       virtual ktStatus
-      adjustOriginalConfig (const CkwsConfig& i_originalConfig,
-			    const CkwsConfig& i_endConfig,
+      adjustOriginalConfig (const CkwsConfig& i_endConfig,
 			    CkwsConfig& io_config);
 
       // FIXME {doxygen}
@@ -170,57 +162,48 @@ namespace kws
 	
       // FIXME {doxygen}
       virtual ktStatus
-      appendStepDP (const CkwsConfig& i_originalConfig,
-		    const CkwsConfig& i_dpEndConfig,
+      appendStepDP (const CkwsConfig& i_dpEndConfig,
 		    unsigned int i_int);
 
       // FIXME: doxygen
       virtual ktStatus
-      tryLateralStepConfig (const CkwsConfig& i_originalConfig,
-			    const CkwsConfig& i_dpEndConfig,
+      tryLateralStepConfig (const CkwsConfig& i_dpEndConfig,
 			    unsigned int i_int,
 			    CkwsConfig& io_reorientedConfig);
 
       // FIXME: doxygen      
       virtual ktStatus
-      tryOriginalStepConfig (const CkwsConfig& i_originalConfig,
-			     const CkwsConfig& i_dpEndConfig,
+      tryOriginalStepConfig (const CkwsConfig& i_dpEndConfig,
 			     unsigned int i_int,
 			     CkwsConfig& io_reorientedConfig);
 
       // FIXME: doxygen
       virtual ktStatus
-      tryAppendFrontalStepDP (const CkwsConfig& i_originalConfig,
-			      const CkwsConfig& i_dpEndConfig,
+      tryAppendFrontalStepDP (const CkwsConfig& i_dpEndConfig,
 			      unsigned int i_int,
 			      CkwsConfig& io_reorientedCfg);
 
       // FIXME: doxygen
       virtual ktStatus
-      tryAppendLateralStepDP (const CkwsConfig& i_originalConfig,
-			      const CkwsConfig& i_dpEndConfig,
+      tryAppendLateralStepDP (const CkwsConfig& i_dpEndConfig,
 			      unsigned int i_int,
 			      CkwsConfig& io_reorientedCfg);
 
       // FIXME: doxygen
       virtual ktStatus
-      tryPreviousLateralStepConfig (const CkwsConfig& i_originalConfig,
-				    const CkwsConfig& i_dpEndConfig,
+      tryPreviousLateralStepConfig (const CkwsConfig& i_dpEndConfig,
 				    unsigned int i_int,
 				    CkwsConfig& io_reorientedConfig);
  
       // FIXME: doxygen
       virtual ktStatus
-      tryPreviousOriginalStepConfig (const CkwsConfig& i_originalConfig,
-				     const CkwsConfig& i_dpEndConfig,
+      tryPreviousOriginalStepConfig (const CkwsConfig& i_dpEndConfig,
 				     unsigned int i_int,
 				     CkwsConfig& io_reorientedConfig);
       
-
       // FIXME: doxygen
       virtual ktStatus
-      tryAppendOriginalStepDP (const CkwsConfig& i_originalConfig,
-			       unsigned int i_int,
+      tryAppendOriginalStepDP (unsigned int i_int,
 			       CkwsConfig& io_reorientedCfg);
 
       // FIXME: doxygen
@@ -255,6 +238,8 @@ namespace kws
       CkwsValidatorDPCollisionShPtr dp_validator_;
       
       CkwsValidatorCfgCollisionShPtr cfg_validator_;
+
+      CkwsConfig original_config_;
 
       OptimizerWkPtr optimizer_;
     };
