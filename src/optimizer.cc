@@ -638,15 +638,6 @@ namespace kws
     }
 
     ktStatus Optimizer::
-    adjustLateralConfig (const CkwsConfig& i_endConfig,
-			 const CkwsConfig& i_nextDPEndConfig,
-			 CkwsConfig& io_config)
-    {
-      // FIXME: write body
-      return KD_OK;
-    }
-
-    ktStatus Optimizer::
     adjustOriginalConfig (const CkwsConfig& i_originalConfig,
 			  const CkwsConfig& i_endConfig,
 			  CkwsConfig& io_config)

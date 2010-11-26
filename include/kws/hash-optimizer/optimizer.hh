@@ -155,12 +155,6 @@ namespace kws
 				       const CkwsConfig& i_endConfig,
 				       unsigned int i_orientation,
 				       CkwsConfig& o_config);
-      
-      // FIXME {doxygen}
-      virtual ktStatus
-      adjustLateralConfig (const CkwsConfig& i_endConfig,
-			   const CkwsConfig& i_nextDPEndConfig,
-			   CkwsConfig& io_config);
 
       // FIXME {doxygen}
       virtual ktStatus
