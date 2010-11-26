@@ -48,16 +48,22 @@ namespace kws
 
       virtual ~Optimizer ();
             
-      /// \brief Get value of max_nb_loop_optimizer_
+      /// \brief Get value of the maximum number of loops
+      /// max_nb_loop_optimizer_ that the basic optimizer is allowed
+      /// to do.
       unsigned int NbOptimizationLoops ();
 
-      /// \brief Get value of step_size_.
+      /// \brief Get value of the hashing interval step_size_.
       double stepSize ();
 
-      /// \brief Get value of min_steps_number_
+      /// \brief Get value of the minimum number of steps
+      /// min_steps_number_ in a direct path under which the direct
+      /// path will not be hashed.
       unsigned int minStepsNb ();
 
-      /// \brief Get value of lateral_angle_
+      /// \brief Get value of the angle lateral_angle_ by which
+      /// configuration is rotated to be oriented laterally (+ or - pi
+      /// / 2).
       double lateralAngle ();
 
       /// \brief Get shared pointer to input path to be optimized
