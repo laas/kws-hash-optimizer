@@ -169,7 +169,9 @@ namespace kws
       // FIXME {doxygen}
       virtual ktStatus
       appendStepDP (const CkwsConfig& i_dpEndConfig,
-		    unsigned int i_int);
+		    unsigned int i_dpIndexInt,
+		    unsigned int i_stepIndexInt,
+		    unsigned int i_stepsNumberInt);
 
       // FIXME: doxygen
       virtual ktStatus
