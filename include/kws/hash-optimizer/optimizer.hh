@@ -149,6 +149,12 @@ namespace kws
 				       unsigned int i_orientation,
 				       CkwsConfig& o_config);
 
+      // FIXME: doxygen
+      virtual ktStatus getOriginalConfig (unsigned int i_dpIndexInt,
+					  unsigned int i_stepIndexInt,
+					  unsigned int i_stepsNumberInt,
+					  CkwsConfig& o_config);  
+      
       // FIXME {doxygen}
       virtual ktStatus
       adjustOriginalConfig (const CkwsConfig& i_endConfig,
@@ -239,7 +245,7 @@ namespace kws
       
       CkwsValidatorCfgCollisionShPtr cfg_validator_;
 
-      CkwsConfig original_config_;
+      CkwsConfigShPtr original_config_;
 
       OptimizerWkPtr optimizer_;
     };

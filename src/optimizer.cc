@@ -116,7 +116,7 @@ namespace kws
 
     CkwsConfig Optimizer::originalConfig () const
     {
-      return original_config_;
+      return *original_config_;
     }
 
     ktStatus Optimizer::doOptimizePath (const CkwsPathShPtr& io_path)
@@ -577,7 +577,7 @@ namespace kws
 		   "Begin and end configuration of direct path are the same");
 	  return KD_ERROR;
 	}
-
+      
       double step = stepSize ();
       double deltaX = i_endConfig.dofValue (0) - lastCfg.dofValue (0);
       double deltaY = i_endConfig.dofValue (1) - lastCfg.dofValue (1);
@@ -592,11 +592,6 @@ namespace kws
       o_config.dofValue (5, atan2 (deltaY, deltaX));
       else if (i_orientation == LATERAL)
 	o_config.dofValue (5, atan2 (deltaY, deltaX) + lateralAngle ());
-      else if (i_orientation == ORIGINAL)
-	{
-	  // FIXME: find a way to retrieve original configuration.
-	  adjustOriginalConfig (i_endConfig, o_config); 
-	}
       
       cfgValidator ()->validate (o_config);
 
@@ -608,6 +603,27 @@ namespace kws
       else return KD_OK;
     }
 
+    ktStatus Optimizer::getOriginalConfig (unsigned int i_dpIndexInt,
+					   unsigned int i_stepIndexInt,
+					   unsigned int i_stepsNumberInt,
+					   CkwsConfig& o_config)
+    {
+      CkwsDirectPathShPtr directPath 
+	= CkwsDirectPath::createCopy (inPath ()->directPath (i_dpIndexInt));
+
+      if (i_stepIndexInt < i_stepsNumberInt - 1)
+	{
+	  directPath->getConfigAtDistance (i_stepIndexInt * stepSize (),
+					   o_config);
+	}
+      else
+	{
+	  directPath->getConfigAtEnd (o_config);
+	}
+
+      return KD_OK;
+    }
+    
     ktStatus Optimizer::
     adjustOriginalConfig (const CkwsConfig& i_endConfig,
 			  CkwsConfig& io_config)
@@ -644,7 +660,7 @@ namespace kws
 		  unsigned int i_int)
     {
       // Set original configuration value.     
-      nextStepConfig (i_dpEndConfig, ORIGINAL, original_config_);
+      // FIXME set original_config_
 
       // Get next step configuration with frontal orientation.
       CkwsConfig nextStepCfg (device ());
@@ -936,7 +952,7 @@ namespace kws
       // configuration.
             
       hppDout (notice, "Appending previous original step DP.");
-      tryAppendOriginalStepDP (i_int - 1, original_config_);
+      tryAppendOriginalStepDP (i_int - 1, *original_config_);
       
       hppDout (notice, "Appending original last step DP.");
       tryAppendOriginalStepDP (i_int, io_reorientedConfig);
@@ -1072,8 +1088,7 @@ namespace kws
 
     Optimizer::Optimizer (unsigned int i_nbLoops,
 			  double i_double,
-			  unsigned int i_nbSteps) : CkwsPathOptimizer (),
-						    original_config_ (device())
+			  unsigned int i_nbSteps) : CkwsPathOptimizer ()
     {
       max_nb_optimization_loops = i_nbLoops;
       human_size_ = i_double;
