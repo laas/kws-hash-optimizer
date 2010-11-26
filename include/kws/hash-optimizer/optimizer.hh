@@ -85,7 +85,7 @@ namespace kws
 
     protected:
       // FIXME {doxygen}
-      enum {FRONTAL, LATERAL, LATERAL_ADJUSTED, ORIGINAL};
+      enum {FRONTAL, LATERAL, ORIGINAL};
 
       /// \brief Non-atomic implementation of Hash Optimizer
       ///
@@ -152,7 +152,6 @@ namespace kws
 
       // FIXME {doxygen}
       virtual ktStatus nextStepConfig (const CkwsConfig& i_originalConfig,
-				       const CkwsConfig& i_beginConfig,
 				       const CkwsConfig& i_endConfig,
 				       unsigned int i_orientation,
 				       CkwsConfig& o_config);
@@ -179,15 +178,13 @@ namespace kws
       virtual ktStatus
       appendStepDP (const CkwsConfig& i_originalConfig,
 		    const CkwsConfig& i_dpEndConfig,
-		    unsigned int i_int,
-		    CkwsConfig& io_lastConfig);
+		    unsigned int i_int);
 
       // FIXME: doxygen
       virtual ktStatus
       tryLateralStepConfig (const CkwsConfig& i_originalConfig,
 			    const CkwsConfig& i_dpEndConfig,
 			    unsigned int i_int,
-			    CkwsConfig& io_lastConfig,
 			    CkwsConfig& io_reorientedConfig);
 
       // FIXME: doxygen      
@@ -195,7 +192,6 @@ namespace kws
       tryOriginalStepConfig (const CkwsConfig& i_originalConfig,
 			     const CkwsConfig& i_dpEndConfig,
 			     unsigned int i_int,
-			     CkwsConfig& io_lastConfig,
 			     CkwsConfig& io_reorientedConfig);
 
       // FIXME: doxygen
@@ -203,7 +199,6 @@ namespace kws
       tryAppendFrontalStepDP (const CkwsConfig& i_originalConfig,
 			      const CkwsConfig& i_dpEndConfig,
 			      unsigned int i_int,
-			      CkwsConfig& io_lastConfig,
 			      CkwsConfig& io_reorientedCfg);
 
       // FIXME: doxygen
@@ -211,7 +206,6 @@ namespace kws
       tryAppendLateralStepDP (const CkwsConfig& i_originalConfig,
 			      const CkwsConfig& i_dpEndConfig,
 			      unsigned int i_int,
-			      CkwsConfig& io_lastConfig,
 			      CkwsConfig& io_reorientedCfg);
 
       // FIXME: doxygen
@@ -219,7 +213,6 @@ namespace kws
       tryPreviousLateralStepConfig (const CkwsConfig& i_originalConfig,
 				    const CkwsConfig& i_dpEndConfig,
 				    unsigned int i_int,
-				    CkwsConfig& io_lastConfig,
 				    CkwsConfig& io_reorientedConfig);
  
       // FIXME: doxygen
@@ -227,7 +220,6 @@ namespace kws
       tryPreviousOriginalStepConfig (const CkwsConfig& i_originalConfig,
 				     const CkwsConfig& i_dpEndConfig,
 				     unsigned int i_int,
-				     CkwsConfig& io_lastConfig,
 				     CkwsConfig& io_reorientedConfig);
       
 
@@ -235,7 +227,6 @@ namespace kws
       virtual ktStatus
       tryAppendOriginalStepDP (const CkwsConfig& i_originalConfig,
 			       unsigned int i_int,
-			       CkwsConfig& io_lastConfig,
 			       CkwsConfig& io_reorientedCfg);
 
       // FIXME: doxygen
