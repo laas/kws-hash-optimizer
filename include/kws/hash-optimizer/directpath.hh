@@ -39,7 +39,10 @@ namespace kws
     class DirectPath : public CkwsDirectPath
     {
     public:
-      virtual DirectPathShPtr
+      static DirectPathShPtr
+      createCopy (const DirectPathConstShPtr& i_directPath);
+
+      virtual CkwsAbstractPathShPtr
       clone () const;
       
       virtual double
@@ -52,6 +55,13 @@ namespace kws
       maxAbsoluteDerivative(double i_from,
 			    double i_to,
 			    std::vector<double>& o_derivative) const;
+      
+    protected:
+      ktStatus
+      init(const DirectPathWkPtr& inWeakPtr);
+
+    private:
+      DirectPathWkPtr attWeakPtr_;
     };
   } // end of namespace hashoptimizer.
 } // end of namespace kws.
