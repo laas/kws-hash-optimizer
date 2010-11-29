@@ -37,6 +37,8 @@
 #include <hpp/util/debug.hh>
 #include <hpp/util/indent.hh>
 
+#include "kws/hash-optimizer/directpath.hh"
+#include "kws/hash-optimizer/steeringmethod.hh"
 #include "kws/hash-optimizer/optimizer.hh"
 
 namespace kws
@@ -139,6 +141,7 @@ namespace kws
 
     ktStatus Optimizer::doOptimizePath (const CkwsPathShPtr& io_path)
     {
+      // Optimize path first with adaptive shortcut optimizer.
       CkwsAdaptiveShortcutOptimizerShPtr basicOptimizer
 	= CkwsAdaptiveShortcutOptimizer::create ();
       basicOptimizer->maxNbLoop (NbOptimizationLoops ());
@@ -151,7 +154,26 @@ namespace kws
 	  return KD_ERROR;
 	}
       
-      i_path_ = copyPath;
+      // Rebuild optimized path with direct path that take only
+      // translation position variables in interpolation and length
+      // computation.
+      CkwsConfig dpStartCfg (device ());
+      CkwsConfig dpEndCfg (device ());
+      CkwsSteeringMethodShPtr steeringMethod = SteeringMethod::create ();
+      i_path_ = CkwsPath::create (device ());
+      for (unsigned int i = 0; i < copyPath->countConfigurations () - 1; i++)
+	{
+	  copyPath->getConfiguration (i, dpStartCfg);
+	  copyPath->getConfiguration (i + 1, dpEndCfg);
+	  CkwsDirectPathShPtr directPath = 
+	    steeringMethod->makeDirectPath (dpStartCfg, dpEndCfg);
+
+	  hppDout (notice, directPath->length ());
+	  
+	  i_path_->appendDirectPath (directPath);
+	}
+
+      // Start hash optimization.
       o_path_ = CkwsPath::create (device ());
       CkwsConfig startCfg (device ());
       inPath ()->getConfigAtStart (startCfg);
@@ -254,6 +276,8 @@ namespace kws
       double deltaY = dpEndCfg.dofValue (1) - dpStartCfg.dofValue (1);
       double dpNorm = sqrt (pow (deltaX, 2) + pow (deltaY, 2));
       
+      hppDout (notice, dpNorm << ", " << directPath->length ());
+
       steps_number_ = (int)(dpNorm / stepSize ());
       hppDout (notice, dpNorm << ", " << stepSize () << ", " << stepsNb ());
       
