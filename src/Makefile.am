@@ -15,7 +15,8 @@ lib_LTLIBRARIES = libkws-hash-optimizer.la
 
 libkws_hash_optimizer_la_SOURCES = 			\
 				optimizer.cc		\
-				directpath.cc
+				directpath.cc		\
+				steeringmethod.cc
 
 libkws_hash_optimizer_la_LIBADD = 		\
 	$(HPP_UTIL_LIBS) 				\

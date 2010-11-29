@@ -18,13 +18,13 @@
 
 
 /**
- * \brief Declaration of DirectPath.
+ * \brief Declaration of SteeringMethod.
  */
 
-#ifndef KWS_HASH_OPTIMIZER_DIRECTPATH_HH_
-# define KWS_HASH_OPTIMIZER_DIRECTPATH_HH_
+#ifndef KWS_HASH_OPTIMIZER_STEERINGMETHOD_HH_
+# define KWS_HASH_OPTIMIZER_STEERINGMETHOD_HH_
 
-#include <KineoWorks2/kwsDirectPath.h>
+#include <KineoWorks2/kwsSteeringMethod.h>
 
 namespace kws
 {
@@ -34,45 +34,26 @@ namespace kws
     /// See Doxygen documentation to learn how to document your classes:
     /// http://www.stack.nl/~dimitri/doxygen/
 
-    KIT_PREDEF_CLASS (DirectPath);
+    KIT_PREDEF_CLASS (SteeringMethod);
 
-    class DirectPath : public CkwsDirectPath
+    class SteeringMethod : public CkwsSteeringMethod
     {
     public:
-      static DirectPathShPtr
-      create (const CkwsConfig& i_start,
-	      const CkwsConfig& i_end ,
-	      const CkwsSteeringMethodShPtr& i_steeringMethod);    
+      virtual CkwsDirectPathShPtr
+      makeDirectPath (const CkwsConfig& i_startCfg,
+		      const CkwsConfig& i_endCfg);
 
-      static DirectPathShPtr
-      createCopy (const DirectPathConstShPtr& i_directPath);
+      virtual bool
+      isOriented () const;
 
-      virtual CkwsAbstractPathShPtr
-      clone () const;
-      
-      virtual double
-      computePrivateLength () const;
-      
-      virtual void
-      interpolate (double i_s, CkwsConfig& o_cfg) const;
-      
-      virtual void
-      maxAbsoluteDerivative(double i_from,
-			    double i_to,
-			    std::vector<double>& o_derivative) const;
-      
     protected:
-      DirectPath (const CkwsConfig& i_start,
-			 const CkwsConfig& i_end,
-			 const CkwsSteeringMethodShPtr& i_steeringMethod);
-      
       ktStatus
-      init(const DirectPathWkPtr& inWeakPtr);
+      init (const SteeringMethodWkPtr &i_smWkPtr);
 
     private:
-      DirectPathWkPtr attWeakPtr_;
+      SteeringMethodWkPtr attWeakPtr_;
     };
   } // end of namespace hashoptimizer.
 } // end of namespace kws.
 
-#endif //! KWS_HASH_OPTIMIZER_DIRECTPATH_HH_
+#endif //! KWS_HASH_OPTIMIZER_STEERINGMETHOD_HH_

@@ -26,5 +26,6 @@
 #include "kws/hash-optimzier/io.hh"
 #include "kws/hash-optimizer/optimizer.hh"
 #include "kws/hash-optimizer/directpath.hh"
+#include "kws/hash-optimizer/steeringmethod.hh"
 
 #endif //! KWS_HASH_OPTIMIZER_HASH_OPTIMZIER_HH_

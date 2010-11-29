@@ -41,6 +41,23 @@ namespace kws
     }
 
     DirectPathShPtr DirectPath::
+    create (const CkwsConfig& i_start,
+	    const CkwsConfig& i_end,
+	    const CkwsSteeringMethodShPtr& i_steeringMethod)
+    {
+      DirectPath* ptr = new DirectPath(i_start,i_end,i_steeringMethod);                 
+
+      DirectPathShPtr shPtr(ptr);                                                       
+      
+      if(KD_OK != ptr->init (shPtr))
+	{
+	  shPtr.reset();
+	}
+      
+      return shPtr;                                                     
+    }                              
+
+    DirectPathShPtr DirectPath::
     createCopy (const DirectPathConstShPtr& i_directPath)
     {
       if (i_directPath)
@@ -109,5 +126,14 @@ namespace kws
       o_derivative[4] = 0;
       o_derivative[5] = 0;
     }
+
+    DirectPath::
+    DirectPath (const CkwsConfig& i_start,
+		const CkwsConfig& i_end,
+		const CkwsSteeringMethodShPtr& i_steeringMethod)
+      : CkwsDirectPath(i_start, i_end, i_steeringMethod)
+    {
+    }    
+
   } // end of namespace hashoptimizer.
 } // end of namespace kws.
