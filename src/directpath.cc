@@ -32,9 +32,9 @@ namespace kws
   namespace hashoptimizer
   {
     ktStatus
-    DirectPath::init(const DirectPathWkPtr& inWeakPtr)
+    DirectPath::init (const DirectPathWkPtr& inWeakPtr)
     {
-      if (CkwsDirectPath::init(inWeakPtr) != KD_OK)
+      if (CkwsDirectPath::init (inWeakPtr) != KD_OK)
 	return KD_ERROR;
       attWeakPtr_ = inWeakPtr;
       return KD_OK;
@@ -45,16 +45,13 @@ namespace kws
 	    const CkwsConfig& i_end,
 	    const CkwsSteeringMethodShPtr& i_steeringMethod)
     {
-      DirectPath* ptr = new DirectPath(i_start,i_end,i_steeringMethod);                 
+      DirectPath* ptr = new DirectPath (i_start, i_end, i_steeringMethod);
+      DirectPathShPtr shPtr(ptr);
 
-      DirectPathShPtr shPtr(ptr);                                                       
-      
       if(KD_OK != ptr->init (shPtr))
-	{
-	  shPtr.reset();
-	}
+	shPtr.reset();
       
-      return shPtr;                                                     
+      return shPtr;                                    
     }                              
 
     DirectPathShPtr DirectPath::
@@ -66,9 +63,10 @@ namespace kws
 	  DirectPathShPtr pathShPtr (pathPtr);
 	  DirectPathWkPtr pathWkPtr (pathShPtr);
 	  
-	  if(pathPtr->init(pathWkPtr) != KD_OK)
-	    pathShPtr.reset() ;
-	  
+	  if (pathPtr->init (pathWkPtr) != KD_OK)
+	    {
+	      pathShPtr.reset() ;
+	    }
 	  return pathShPtr;
 	}
       else return DirectPathShPtr() ;
@@ -131,7 +129,7 @@ namespace kws
     DirectPath (const CkwsConfig& i_start,
 		const CkwsConfig& i_end,
 		const CkwsSteeringMethodShPtr& i_steeringMethod)
-      : CkwsDirectPath(i_start, i_end, i_steeringMethod)
+      : CkwsDirectPath (i_start, i_end, i_steeringMethod)
     {
     }    
 

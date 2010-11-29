@@ -54,5 +54,23 @@ namespace kws
       attWeakPtr_ = i_smWkPtr;
       return KD_OK;
     }
+ 
+    SteeringMethodShPtr SteeringMethod::
+    create (bool i_oriented)
+    {
+      SteeringMethod* ptr = new SteeringMethod(i_oriented);          
+      SteeringMethodShPtr shPtr(ptr);
+      
+      if(ptr->init(shPtr) != KD_OK)
+	shPtr.reset();
+      
+      return shPtr;                                                                 
+    }
+
+    SteeringMethod::
+    SteeringMethod (bool i_oriented) : CkwsSteeringMethod::CkwsSteeringMethod ()
+    {
+    }
+
   } // end of namespace hashoptimizer.
 } // end of namespace kws.

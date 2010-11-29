@@ -39,6 +39,8 @@ namespace kws
     class SteeringMethod : public CkwsSteeringMethod
     {
     public:
+      static SteeringMethodShPtr create (bool i_oriented = false);
+      
       virtual CkwsDirectPathShPtr
       makeDirectPath (const CkwsConfig& i_startCfg,
 		      const CkwsConfig& i_endCfg);
@@ -49,6 +51,8 @@ namespace kws
     protected:
       ktStatus
       init (const SteeringMethodWkPtr &i_smWkPtr);
+
+      SteeringMethod (bool i_oriented = false);
 
     private:
       SteeringMethodWkPtr attWeakPtr_;
