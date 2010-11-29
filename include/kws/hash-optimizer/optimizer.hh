@@ -152,8 +152,7 @@ namespace kws
 
       // FIXME {doxygen}
       virtual ktStatus
-      nextStepConfig (const CkwsConfig& i_endConfig,
-		      unsigned int i_orientation,
+      nextStepConfig (unsigned int i_orientation,
 		      CkwsConfig& o_config);
 
       // FIXME: doxygen
@@ -172,37 +171,31 @@ namespace kws
 
       // FIXME {doxygen}
       virtual ktStatus
-      appendStepDP (const CkwsConfig& i_dpEndConfig);
+      appendStepDP ();
 
       // FIXME: doxygen
       virtual ktStatus
-      tryLateralStepConfig (const CkwsConfig& i_dpEndConfig,
-			    CkwsConfig& io_reorientedConfig);
+      tryLateralStepConfig (CkwsConfig& io_reorientedConfig);
 
       // FIXME: doxygen      
       virtual ktStatus
-      tryOriginalStepConfig (const CkwsConfig& i_dpEndConfig,
-			     CkwsConfig& io_reorientedConfig);
+      tryOriginalStepConfig (CkwsConfig& io_reorientedConfig);
 
       // FIXME: doxygen
       virtual ktStatus
-      tryAppendFrontalStepDP (const CkwsConfig& i_dpEndConfig,
-			      CkwsConfig& io_reorientedCfg);
+      tryAppendFrontalStepDP (CkwsConfig& io_reorientedCfg);
 
       // FIXME: doxygen
       virtual ktStatus
-      tryAppendLateralStepDP (const CkwsConfig& i_dpEndConfig,
-			      CkwsConfig& io_reorientedCfg);
+      tryAppendLateralStepDP (CkwsConfig& io_reorientedCfg);
 
       // FIXME: doxygen
       virtual ktStatus
-      tryPreviousLateralStepConfig (const CkwsConfig& i_dpEndConfig,
-				    CkwsConfig& io_reorientedConfig);
+      tryPreviousLateralStepConfig (CkwsConfig& io_reorientedConfig);
 
       // FIXME: doxygen
       virtual ktStatus
-      tryPreviousOriginalStepConfig (const CkwsConfig& i_dpEndConfig,
-				     CkwsConfig& io_reorientedConfig);
+      tryPreviousOriginalStepConfig (CkwsConfig& io_reorientedConfig);
 
       // FIXME: doxygen
       virtual ktStatus
