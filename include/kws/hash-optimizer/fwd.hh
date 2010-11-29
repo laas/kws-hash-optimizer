@@ -27,7 +27,9 @@ namespace kws
   namespace hashoptimizer
   {
     class Optimizer;
+    class DirectPath;
     KIT_PREDEF_CLASS (Optimizer);
+    KIT_PREDEF_CLASS (DirectPath);
   } // end of namespace hashoptimizer 
 } // end of namespace kws.
 

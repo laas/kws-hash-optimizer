@@ -14,7 +14,8 @@ AM_CPPFLAGS += 					\
 lib_LTLIBRARIES = libkws-hash-optimizer.la
 
 libkws_hash_optimizer_la_SOURCES = 			\
-				optimizer.cc
+				optimizer.cc		\
+				directpath.cc
 
 libkws_hash_optimizer_la_LIBADD = 		\
 	$(HPP_UTIL_LIBS) 				\

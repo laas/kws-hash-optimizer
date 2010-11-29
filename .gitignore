@@ -9,3 +9,7 @@ config.h.in
 configure
 aclocal.m4
 tests/testsuite
+#.gitmodules#
+include/kws/hash-optimizer/#fwd.hh#
+src/#directpath.cc#
+src/.#directpath.cc
