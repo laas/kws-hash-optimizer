@@ -271,16 +271,7 @@ namespace kws
       CkwsConfig dpEndCfg (device ());
       directPath->getConfigAtEnd (dpEndCfg);
 
-      // Check first if direct path is hashable. If not append direct
-      // path by only modifying its end configuration.
-      double deltaX = dpEndCfg.dofValue (0) - dpStartCfg.dofValue (0);
-      double deltaY = dpEndCfg.dofValue (1) - dpStartCfg.dofValue (1);
-      double dpNorm = sqrt (pow (deltaX, 2) + pow (deltaY, 2));
-      
-      hppDout (notice, dpNorm << ", " << directPath->length ());
-
-      steps_number_ = (int)(dpNorm / stepSize ());
-      hppDout (notice, dpNorm << ", " << stepSize () << ", " << stepsNb ());
+      steps_number_ = (int)(directPath->length () / stepSize ());
       
       if (stepsNb () < minStepsNb ())
       	{
@@ -981,23 +972,13 @@ namespace kws
 	      // Compute previous direct path number of steps.
 	      CkwsDirectPathShPtr directPath = 
 		CkwsDirectPath::createCopy (inPath ()->directPath (dpIndex ()));
-
-	      CkwsConfig dpStartCfg (device ());
-	      directPath->getConfigAtStart (dpStartCfg);
-	      CkwsConfig dpEndCfg (device ());
-	      directPath->getConfigAtEnd (dpEndCfg);
-
-	      double deltaX = dpEndCfg.dofValue (0) - dpStartCfg.dofValue (0);
-	      double deltaY = dpEndCfg.dofValue (1) - dpStartCfg.dofValue (1);
-	      double dpNorm = sqrt (pow (deltaX, 2) + pow (deltaY, 2));
-      
-	      steps_number_ = (int)(dpNorm / stepSize ());
+	      steps_number_ = (int)(directPath->length () / stepSize ());
 
 	      // Remove last step direct path from previous direct
 	      // path.
 	      outPath ()->extractToDirectPath (outPath ()->
 					       countDirectPaths () - 1);
-	      step_index_ = stepsNb () - 2;
+	      step_index_ = stepsNb () - 1;
 	      getOriginalConfig (originalCfg);
 	      *original_config_ = originalCfg;
 	    }
@@ -1022,24 +1003,13 @@ namespace kws
       // Check if end of direct path has been reached.
       if (stepIndex () == stepsNb () - 1)
 	{
+	  step_index_ = 0;	  
 	  dp_index_++;
 
 	  // Compute next direct path number of steps.
 	  CkwsDirectPathShPtr directPath = 
 	    CkwsDirectPath::createCopy (inPath ()->directPath (dpIndex ()));
-
-	  CkwsConfig dpStartCfg (device ());
-	  directPath->getConfigAtStart (dpStartCfg);
-	  CkwsConfig dpEndCfg (device ());
-	  directPath->getConfigAtEnd (dpEndCfg);
-
-	  double deltaX = dpEndCfg.dofValue (0) - dpStartCfg.dofValue (0);
-	  double deltaY = dpEndCfg.dofValue (1) - dpStartCfg.dofValue (1);
-	  double dpNorm = sqrt (pow (deltaX, 2) + pow (deltaY, 2));
-      
-	  steps_number_ = (int)(dpNorm / stepSize ());
-
-	  step_index_ = 0;
+	  steps_number_ = (int)(directPath->length () / stepSize ());
 	}
 
       getOriginalConfig (originalCfg);
