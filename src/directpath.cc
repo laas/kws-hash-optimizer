@@ -31,11 +31,14 @@ namespace kws
 {
   namespace hashoptimizer
   {
+    DirectPath::
+    ~DirectPath ()
+    {
+    }
+
     ktStatus
     DirectPath::init (const DirectPathWkPtr& inWeakPtr)
     {
-      if (CkwsDirectPath::init (inWeakPtr) != KD_OK)
-	return KD_ERROR;
       attWeakPtr_ = inWeakPtr;
       return KD_OK;
     }
@@ -48,11 +51,11 @@ namespace kws
       DirectPath* ptr = new DirectPath (i_start, i_end, i_steeringMethod);
       DirectPathShPtr shPtr(ptr);
 
-      if(KD_OK != ptr->init (shPtr))
-	shPtr.reset();
+      if (KD_OK != ptr->init (shPtr))
+	shPtr.reset ();
       
-      return shPtr;                                    
-    }                              
+      return shPtr;
+    }
 
     DirectPathShPtr DirectPath::
     createCopy (const DirectPathConstShPtr& i_directPath)
@@ -84,14 +87,14 @@ namespace kws
       CkwsConfig startCfg (device ());
       getConfigAtStart (startCfg);
       CkwsConfig endCfg (device ());
-      getConfigAtStart (endCfg);
+      getConfigAtEnd (endCfg);
 
       double deltaX = endCfg.dofValue (0) - startCfg.dofValue (0);
       double deltaY = endCfg.dofValue (1) - startCfg.dofValue (1);
       double vecNorm = sqrt (pow (deltaX, 2) + pow (deltaY, 2));
- 
+
       return vecNorm;
-    } 
+    }
       
     void DirectPath::
     interpolate (double i_s, CkwsConfig& o_cfg) const

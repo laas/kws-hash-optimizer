@@ -18,12 +18,10 @@
 
 
 /**
- * \file src/directpath.cc
+ * \file src/steeringmethod.cc
  *
- * \brief Implementation of DirectPath.
+ * \brief Implementation of SteeringMethod.
  */
-
-#include <math.h>
 
 #include "kws/hash-optimizer/directpath.hh"
 
@@ -37,7 +35,7 @@ namespace kws
     makeDirectPath (const CkwsConfig& i_startCfg,
 		    const CkwsConfig& i_endCfg)
     {
-      return DirectPath::create (i_startCfg, i_endCfg, attWeakPtr_.lock());
+      return DirectPath::create (i_startCfg, i_endCfg, attWeakPtr_.lock ());
     }
 
     bool SteeringMethod::
@@ -49,9 +47,10 @@ namespace kws
     ktStatus SteeringMethod::
     init (const SteeringMethodWkPtr &i_smWkPtr)
     {
-      if (CkwsSteeringMethod::init(i_smWkPtr) != KD_OK)
+      if (CkwsSteeringMethod::init (i_smWkPtr) != KD_OK)
 	return KD_ERROR;
       attWeakPtr_ = i_smWkPtr;
+
       return KD_OK;
     }
  

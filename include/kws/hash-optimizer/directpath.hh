@@ -39,6 +39,8 @@ namespace kws
     class DirectPath : public CkwsDirectPath
     {
     public:
+      virtual ~DirectPath ();
+
       static DirectPathShPtr
       create (const CkwsConfig& i_start,
 	      const CkwsConfig& i_end ,
@@ -50,21 +52,21 @@ namespace kws
       virtual CkwsAbstractPathShPtr
       clone () const;
       
-      virtual double
-      computePrivateLength () const;
-      
-      virtual void
-      interpolate (double i_s, CkwsConfig& o_cfg) const;
-      
       virtual void
       maxAbsoluteDerivative(double i_from,
 			    double i_to,
 			    std::vector<double>& o_derivative) const;
       
     protected:
+      virtual double
+      computePrivateLength () const;
+      
+      virtual void
+      interpolate (double i_s, CkwsConfig& o_cfg) const;
+      
       DirectPath (const CkwsConfig& i_start,
-			 const CkwsConfig& i_end,
-			 const CkwsSteeringMethodShPtr& i_steeringMethod);
+		  const CkwsConfig& i_end,
+		  const CkwsSteeringMethodShPtr& i_steeringMethod);
       
       ktStatus
       init(const DirectPathWkPtr& inWeakPtr);

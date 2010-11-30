@@ -165,6 +165,7 @@ namespace kws
 	{
 	  copyPath->getConfiguration (i, dpStartCfg);
 	  copyPath->getConfiguration (i + 1, dpEndCfg);
+
 	  CkwsDirectPathShPtr directPath = 
 	    steeringMethod->makeDirectPath (dpStartCfg, dpEndCfg);
 
