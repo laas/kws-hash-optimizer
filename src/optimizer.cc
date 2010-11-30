@@ -736,8 +736,8 @@ namespace kws
     ktStatus Optimizer::
     tryOriginalStepConfig (CkwsConfig& io_reorientedConfig)
     {
-      getOriginalConfig (io_reorientedConfig);
-      
+      io_reorientedConfig = originalConfig ();
+
       // Try to append step DP with original orientation.
       tryAppendOriginalStepDP (io_reorientedConfig);
       
@@ -959,31 +959,91 @@ namespace kws
     ktStatus Optimizer::
     tryPreviousOriginalStepConfig (CkwsConfig& io_reorientedConfig)
     {
-      // Remove last step direct path only if it inside the current
-      // direct path.
-      CkwsConfig lastCfg (device ());
+      CkwsConfig originalCfg (device ());
 
+      // What to do if start of current direct path is reached
       if (stepIndex () == 0)
 	{
-	  hppDout (warning, "cannot remove direct path.");
-	  return KD_ERROR;
+	  // Don't do anything if the path start configuration is reached.
+	  if (dpIndex () == 0)
+	    {
+	      hppDout (error,
+		       "Reached start of path, cannot remove direct path.");
+	      return KD_ERROR;
+	    }
+	  // Otherwise crossover to previous step direct path and
+	  // remove step direct path.
+	  else
+	    {
+	      hppDout (notice, "Crossing to previous direct path");
+	      dp_index_--;
+
+	      // Compute previous direct path number of steps.
+	      CkwsDirectPathShPtr directPath = 
+		CkwsDirectPath::createCopy (inPath ()->directPath (dpIndex ()));
+
+	      CkwsConfig dpStartCfg (device ());
+	      directPath->getConfigAtStart (dpStartCfg);
+	      CkwsConfig dpEndCfg (device ());
+	      directPath->getConfigAtEnd (dpEndCfg);
+
+	      double deltaX = dpEndCfg.dofValue (0) - dpStartCfg.dofValue (0);
+	      double deltaY = dpEndCfg.dofValue (1) - dpStartCfg.dofValue (1);
+	      double dpNorm = sqrt (pow (deltaX, 2) + pow (deltaY, 2));
+      
+	      steps_number_ = (int)(dpNorm / stepSize ());
+
+	      // Remove last step direct path from previous direct
+	      // path.
+	      outPath ()->extractToDirectPath (outPath ()->
+					       countDirectPaths () - 1);
+	      step_index_ = stepsNb () - 2;
+	      getOriginalConfig (originalCfg);
+	      *original_config_ = originalCfg;
+	    }
 	}
+      // Remove last appended step direct path.
       else
 	{
 	  outPath ()->extractToDirectPath (outPath ()->countDirectPaths () - 1);
-	  outPath ()->getConfigAtEnd (lastCfg);
+	  step_index_--;
+	  getOriginalConfig (originalCfg);
+	  *original_config_ = originalCfg;
 	}
-	  
+
       // Replace it with one where last configuration is the orginal
       // configuration.
             
       hppDout (notice, "Appending previous original step DP.");
-      CkwsConfig originalCfg (device ());
-      originalCfg = originalConfig ();
 
-      step_index_--;
       tryAppendOriginalStepDP (originalCfg);
+
       step_index_++;
+      // Check if end of direct path has been reached.
+      if (stepIndex () == stepsNb () - 1)
+	{
+	  dp_index_++;
+
+	  // Compute next direct path number of steps.
+	  CkwsDirectPathShPtr directPath = 
+	    CkwsDirectPath::createCopy (inPath ()->directPath (dpIndex ()));
+
+	  CkwsConfig dpStartCfg (device ());
+	  directPath->getConfigAtStart (dpStartCfg);
+	  CkwsConfig dpEndCfg (device ());
+	  directPath->getConfigAtEnd (dpEndCfg);
+
+	  double deltaX = dpEndCfg.dofValue (0) - dpStartCfg.dofValue (0);
+	  double deltaY = dpEndCfg.dofValue (1) - dpStartCfg.dofValue (1);
+	  double dpNorm = sqrt (pow (deltaX, 2) + pow (deltaY, 2));
+      
+	  steps_number_ = (int)(dpNorm / stepSize ());
+
+	  step_index_ = 0;
+	}
+
+      getOriginalConfig (originalCfg);
+      *original_config_ = originalCfg;
 
       hppDout (notice, "Appending original last step DP.");
       tryAppendOriginalStepDP (io_reorientedConfig);
