@@ -978,7 +978,7 @@ namespace kws
 	      // path.
 	      outPath ()->extractToDirectPath (outPath ()->
 					       countDirectPaths () - 1);
-	      step_index_ = stepsNb () - 1;
+	      step_index_ = stepsNb () - 2;
 	      getOriginalConfig (originalCfg);
 	      *original_config_ = originalCfg;
 	    }
@@ -1001,9 +1001,9 @@ namespace kws
 
       step_index_++;
       // Check if end of direct path has been reached.
-      if (stepIndex () == stepsNb () - 1)
+      if (stepIndex () == stepsNb () - 2)
 	{
-	  step_index_ = 0;	  
+	  step_index_ = 0;
 	  dp_index_++;
 
 	  // Compute next direct path number of steps.
