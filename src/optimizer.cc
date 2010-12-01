@@ -277,24 +277,27 @@ namespace kws
       steps_number_ = (int)(directPath->length () / stepSize ());
       
       if (stepsNb () < minStepsNb ())
-      	{
-	  // Append modified direct path
-      	  CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
-      	  CkwsDirectPathShPtr directPath 
-      	    = linearSM->makeDirectPath (dpStartCfg, dpEndCfg);
+	// Set steps number value to append one step, i.e. the whole
+	// direct path.
+	steps_number_ = 2;
+      	// {
+	//   // Append modified direct path
+      	//   CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
+      	//   CkwsDirectPathShPtr directPath 
+      	//     = linearSM->makeDirectPath (dpStartCfg, dpEndCfg);
 	  
-      	  //FIXME: check direct path validity?
-      	  if (KD_ERROR == outPath ()->appendDirectPath (directPath))
-      	    {
-	      hppDout (error, "Could not append DP " << dpIndex ());
-      	      return KD_ERROR;
-      	    }
-      	  else 
-      	    {
-	      hppDout (notice, "Appended DP " << dpIndex ());
-      	      return KD_OK;
-      	    }
-      	}
+      	//   //FIXME: check direct path validity?
+      	//   if (KD_ERROR == outPath ()->appendDirectPath (directPath))
+      	//     {
+	//       hppDout (error, "Could not append DP " << dpIndex ());
+      	//       return KD_ERROR;
+      	//     }
+      	//   else 
+      	//     {
+	//       hppDout (notice, "Appended DP " << dpIndex ());
+      	//       return KD_OK;
+      	//     }
+      	// }
       
       // Hash direct path.
       step_index_ = 0;
