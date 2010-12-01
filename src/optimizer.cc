@@ -279,7 +279,7 @@ namespace kws
       if (stepsNb () < minStepsNb ())
 	// Set steps number value to append one step, i.e. the whole
 	// direct path.
-	steps_number_ = 2;
+	steps_number_ = 1;
       	// {
 	//   // Append modified direct path
       	//   CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
