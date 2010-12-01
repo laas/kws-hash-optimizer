@@ -1028,6 +1028,22 @@ namespace kws
       
       if (!stepDP->isValid ())
 	{
+	  if (dpIndex () == inPath ()->countConfigurations  () - 2
+	      && stepIndex () == stepsNb () - 1)
+	    {
+	      hppDout (notice, "keep end configuration");
+	      hppDout (notice, "try previous original step config "
+		       << stepIndex ());
+
+	      if (KD_ERROR ==
+		  tryPreviousOriginalStepConfig (io_reorientedCfg))
+		{
+		  hppDout (error,
+			   "Failed to append original previous step direct path "
+			   << stepIndex ());
+		  return KD_ERROR;
+		}
+	    }
 	  // Flip configuration to try other original orientation and
 	  // make new direct path.
 	  hppDout (warning,
