@@ -448,9 +448,9 @@ namespace kws
 	  return KD_OK;
 	}
 
-      CkwsSteeringMethodShPtr steeringMethod = SteeringMethod::create ();
+      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
-	= steeringMethod->makeDirectPath (lastCfg, io_reorientedConfig);
+	= linearSM->makeDirectPath (lastCfg, io_reorientedConfig);
       dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
@@ -507,9 +507,9 @@ namespace kws
 					- M_PI);
 	}
 
-      CkwsSteeringMethodShPtr steeringMethod = SteeringMethod::create ();
+      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
-	= steeringMethod->makeDirectPath (lastCfg, io_reorientedConfig);
+	= linearSM->makeDirectPath (lastCfg, io_reorientedConfig);
       dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
@@ -528,7 +528,7 @@ namespace kws
 	    }
 
 	  CkwsDirectPathShPtr stepDP 
-	    = steeringMethod->makeDirectPath (lastCfg, io_reorientedConfig);
+	    = linearSM->makeDirectPath (lastCfg, io_reorientedConfig);
 	  dpValidator ()->validate (*stepDP);
 
 	  if (!stepDP->isValid ())
@@ -657,9 +657,9 @@ namespace kws
 	  return KD_ERROR;
 	}
 
-      CkwsSteeringMethodShPtr steeringMethod = SteeringMethod::create ();
+      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
-	= steeringMethod->makeDirectPath (i_beginConfig, i_endConfig);
+	= linearSM->makeDirectPath (i_beginConfig, i_endConfig);
       dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
@@ -750,9 +750,9 @@ namespace kws
 	  return KD_OK;
 	}
       
-      CkwsSteeringMethodShPtr steeringMethod = SteeringMethod::create ();
+      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
-	= steeringMethod->makeDirectPath (lastCfg, io_reorientedCfg);
+	= linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
       dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
@@ -808,9 +808,9 @@ namespace kws
 				     - M_PI);
 	}
       
-      CkwsSteeringMethodShPtr steeringMethod = SteeringMethod::create ();
+      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
-	= steeringMethod->makeDirectPath (lastCfg, io_reorientedCfg);
+	= linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
       dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
@@ -829,7 +829,7 @@ namespace kws
 	    }
 
 	  CkwsDirectPathShPtr stepDP 
-	    = steeringMethod->makeDirectPath (lastCfg, io_reorientedCfg);
+	    = linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
 	  dpValidator ()->validate (*stepDP);
 
 	  if (!stepDP->isValid ())
@@ -1021,9 +1021,9 @@ namespace kws
 				     - M_PI);
 	}
 
-      CkwsSteeringMethodShPtr steeringMethod = SteeringMethod::create ();
+      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
-	= steeringMethod->makeDirectPath (lastCfg, io_reorientedCfg);
+	= linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
       dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
@@ -1043,7 +1043,7 @@ namespace kws
 	    }
 
 	  CkwsDirectPathShPtr stepDP 
-	    = steeringMethod->makeDirectPath (lastCfg, io_reorientedCfg);
+	    = linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
 	  dpValidator ()->validate (*stepDP);
 	  
 	  if (!stepDP->isValid ())
