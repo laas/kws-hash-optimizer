@@ -285,30 +285,30 @@ namespace kws
       step_index_ = 0;
       
       // Append all step direct paths except for last one.
-      while (stepIndex () < stepsNb () - 1)
+      while (stepIndex () < stepsNb ())
 	{
 	  hppDout (notice, "Appending step direct path " << stepIndex ()
 		   << " of " << stepsNb () - 1);
-	  if (KD_ERROR == appendStepDP ())
+	  if (stepIndex () == stepsNb () - 1)
 	    {
-	      hppDout (error, "Could not reorient configuration "
-		       << stepIndex ());
-	      return KD_ERROR;
+	      if (KD_ERROR == appendLastStepDP ())
+		{
+		  hppDout (error, "Could not append last direct path.");
+		  return KD_ERROR;
+		}
 	    }
-
+      	  else if (stepIndex () < stepsNb () - 1)
+	    {
+	      if (KD_ERROR == appendStepDP ())
+		{
+		  hppDout (error, "Could not append step direct path. "
+			     << stepIndex ());
+		  return KD_ERROR;
+		}
+	    }
+	  
 	  step_index_++;
 	}
-      
-      // Append last direct path.
-      hppDout (notice, "Appending step direct path " << stepIndex ()
-	       << " of " << stepsNb () - 1);
-      if (KD_ERROR == appendLastStepDP ())
-	{
-	  hppDout (error, "Could not append last direct path.");
-	  return KD_ERROR;
-	}
-      
-      return KD_OK;
     }
 
     ktStatus Optimizer::
