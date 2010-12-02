@@ -808,8 +808,16 @@ namespace kws
 	{
 	  hppDout (warning,
 		   "Singularity detected, rotating end configuration.");
-	  io_reorientedCfg.dofValue (5, io_reorientedCfg.dofValue (5) 
-				     - M_PI);
+	  
+	  if (dpIndex () == inPath ()->countConfigurations  () - 2
+	      && stepIndex () == stepsNb () - 1)
+	    {
+	      hppDout (notice, "Keep path end configuration");
+	      tryPreviousLateralStepConfig (io_reorientedCfg);
+	    }
+	  else
+	    io_reorientedCfg.dofValue (5, io_reorientedCfg.dofValue (5) 
+				       - M_PI);
 	}
       
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
@@ -888,7 +896,7 @@ namespace kws
       if (stepIndex () == 0)
 	{
 	  hppDout (warning, "cannot remove direct path.");
-	  return KD_ERROR;
+	  tryPreviousOriginalStepConfig (io_reorientedConfig);
 	}
       else
 	{
@@ -1047,6 +1055,7 @@ namespace kws
 			   << stepIndex ());
 		  return KD_ERROR;
 		}
+	      else return KD_OK;
 	    }
 	  // Flip configuration to try other original orientation and
 	  // make new direct path.
