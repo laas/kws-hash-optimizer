@@ -512,8 +512,15 @@ namespace kws
 	  hppDout (warning,
 		   "Singularity detected, lateral step direct path not valid.");
 	  
-	  io_reorientedConfig.dofValue (5, io_reorientedConfig.dofValue (5) 
-					- M_PI);
+	  if (dpIndex () == inPath ()->countConfigurations  () - 2
+	      && stepIndex () == stepsNb () - 1)
+	    {
+	      hppDout (notice, "Keep path end configuration");
+	      tryPreviousLateralStepConfig (io_reorientedConfig);
+	    }
+	  else
+	    io_reorientedConfig.dofValue (5, io_reorientedConfig.dofValue (5) 
+					  - M_PI);
 	}
 
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
@@ -1007,6 +1014,7 @@ namespace kws
       *original_config_ = originalCfg;
 
       hppDout (notice, "Appending original last step DP.");
+      
       return tryAppendOriginalStepDP (io_reorientedConfig);
     }
 
