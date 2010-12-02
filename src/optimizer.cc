@@ -442,8 +442,17 @@ namespace kws
 	  hppDout (warning,
 		   "Singularity detected, frontal step direct path not valid.");
 	  
-	  hppDout (notice, "Trying lateral orientation " << dpIndex ());
-	  tryOrientLateralDPEndConfig (io_reorientedConfig);
+	  if (dpIndex () == inPath ()->countConfigurations  () - 2
+	      && stepIndex () == stepsNb () - 1)
+	    {
+	      hppDout (notice, "Keep path end configuration");
+	      return tryPreviousLateralStepConfig (io_reorientedConfig);
+	    }
+	  else
+	    {
+	      hppDout (notice, "Trying lateral orientation " << dpIndex ());
+	      tryOrientLateralDPEndConfig (io_reorientedConfig);
+	    }
 	  
 	  return KD_OK;
 	}
