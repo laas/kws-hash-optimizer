@@ -408,7 +408,7 @@ namespace kws
 	  // Try to append lateral step direct path.
 	  hppDout (notice, "Trying to append lateral step direct path "
 		   << dpIndex ());
-	  tryAppendLateralLastStepDP (io_reorientedConfig);
+	  tryAppendLateralStepDP (io_reorientedConfig);
 	}
 
       return KD_OK;
@@ -1124,7 +1124,7 @@ namespace kws
 	  hppDout (notice,
 		   "Trying to append frontal step direct path "
 		   << dpIndex ());
-	  return tryAppendFrontalLastStepDP (dpEndCfg);
+	  return tryAppendFrontalStepDP (dpEndCfg);
 	}
     }
 
