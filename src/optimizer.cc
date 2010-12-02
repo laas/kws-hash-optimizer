@@ -309,6 +309,8 @@ namespace kws
 	  
 	  step_index_++;
 	}
+
+      return KD_OK;
     }
 
     ktStatus Optimizer::
@@ -639,7 +641,7 @@ namespace kws
 
     ktStatus Optimizer::getOriginalConfig (CkwsConfig& o_config)
     {
-      CkwsDirectPathShPtr directPath 
+      CkwsDirectPathShPtr directPath
 	= CkwsDirectPath::createCopy (inPath ()->directPath (dpIndex ()));
 
       if (stepIndex () < stepsNb () - 1)
@@ -907,39 +909,45 @@ namespace kws
 
       // Remove last step direct path only if it inside the current
       // direct path.
-      CkwsConfig lastCfg (device ());
-      
+      CkwsConfig originalCfg (device ());
+
+      // What to do if start of current direct path is reached.
       if (stepIndex () == 0)
 	{
 	  hppDout (warning, "cannot remove direct path.");
-	  tryPreviousOriginalStepConfig (io_reorientedConfig);
+	  return tryPreviousOriginalStepConfig (io_reorientedConfig);
 	}
       else
 	{
 	  outPath ()->extractToDirectPath (outPath ()->countDirectPaths () - 1);
-	  outPath ()->getConfigAtEnd (lastCfg);
+	  step_index_--;
+	  getOriginalConfig (originalCfg);
+	  *original_config_ = originalCfg;
 	}
 	  
       // Replace it with one where last configuration is oriented
       // laterally.
       CkwsConfig lateralCfg (device ());
+
       if (KD_ERROR == nextStepConfig (LATERAL, lateralCfg))
 	{
-	  // FIXME: What to do in this case.
-	  hppDout (error, "Previous lateral configuration not valid.");
-	  return KD_OK;
+	  hppDout (warning, "Previous lateral configuration not valid.");
+	  hppDout (notice, "Trying original configuration.");
+	  return tryOriginalStepConfig (lateralCfg);
 	}
       else
 	{
 	  hppDout (notice, "Appending previous lateral step DP.");
-	  step_index_--;
 
 	  if (KD_ERROR == tryAppendLateralStepDP (lateralCfg))
 	    return KD_ERROR;
 
 	  step_index_++;
+	  getOriginalConfig (originalCfg);
+	  *original_config_ = originalCfg;
 
 	  hppDout (notice, "Appending lateral step DP.");
+
 	  return tryAppendLateralStepDP (io_reorientedConfig);
 	}
     }
@@ -947,9 +955,13 @@ namespace kws
     ktStatus Optimizer::
     tryPreviousOriginalStepConfig (CkwsConfig& io_reorientedConfig)
     {
+      hppDout (notice, " try previous original step config " << stepIndex ());
+      
+      // Remove last step direct path only if it inside the current
+      // direct path.
       CkwsConfig originalCfg (device ());
 
-      // What to do if start of current direct path is reached
+      // What to do if start of current direct path is reached.
       if (stepIndex () == 0)
 	{
 	  // Don't do anything if the path start configuration is reached.
@@ -975,7 +987,7 @@ namespace kws
 	      // path.
 	      outPath ()->extractToDirectPath (outPath ()->
 					       countDirectPaths () - 1);
-	      step_index_ = stepsNb () - 2;
+	      step_index_ = stepsNb () - 1;
 	      getOriginalConfig (originalCfg);
 	      *original_config_ = originalCfg;
 	    }
@@ -997,9 +1009,8 @@ namespace kws
       if (KD_ERROR == tryAppendOriginalStepDP (originalCfg))
 	return KD_ERROR;
 
-      step_index_++;
       // Check if end of direct path has been reached.
-      if (stepIndex () == stepsNb () - 2)
+      if (stepIndex () == stepsNb () - 1)
 	{
 	  step_index_ = 0;
 	  dp_index_++;
@@ -1009,12 +1020,13 @@ namespace kws
 	    CkwsDirectPath::createCopy (inPath ()->directPath (dpIndex ()));
 	  steps_number_ = (int)(directPath->length () / stepSize ());
 	}
+      else step_index_++;
 
       getOriginalConfig (originalCfg);
       *original_config_ = originalCfg;
 
       hppDout (notice, "Appending original last step DP.");
-      
+
       return tryAppendOriginalStepDP (io_reorientedConfig);
     }
 
