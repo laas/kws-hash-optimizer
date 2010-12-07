@@ -462,7 +462,13 @@ namespace kws
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
 	= linearSM->makeDirectPath (lastCfg, io_reorientedConfig);
-      dpValidator ()->validate (*stepDP);
+
+      if (!stepDP)
+	{
+	  hppDout (error, "step direct path does not exist");
+	  return KD_ERROR;
+	}
+      else dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
@@ -528,7 +534,13 @@ namespace kws
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
 	= linearSM->makeDirectPath (lastCfg, io_reorientedConfig);
-      dpValidator ()->validate (*stepDP);
+
+      if (!stepDP)
+	{
+	  hppDout (error, "step direct path does not exist");
+	  return KD_ERROR;
+	}
+      else dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
@@ -547,7 +559,13 @@ namespace kws
 
 	  CkwsDirectPathShPtr stepDP 
 	    = linearSM->makeDirectPath (lastCfg, io_reorientedConfig);
-	  dpValidator ()->validate (*stepDP);
+
+	  if (!stepDP)
+	    {
+	      hppDout (error, "step direct path does not exist");
+	      return KD_ERROR;
+	    }
+	  else dpValidator ()->validate (*stepDP);
 
 	  if (!stepDP->isValid ())
 	    {
@@ -678,7 +696,13 @@ namespace kws
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
 	= linearSM->makeDirectPath (i_beginConfig, i_endConfig);
-      dpValidator ()->validate (*stepDP);
+
+      if (!stepDP)
+	{
+	  hppDout (error, "step direct path does not exist");
+	  return KD_ERROR;
+	}
+      else dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
@@ -775,7 +799,13 @@ namespace kws
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
 	= linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
-      dpValidator ()->validate (*stepDP);
+
+      if (!stepDP)
+	{
+	  hppDout (error, "step direct path does not exist");
+	  return KD_ERROR;
+	}
+      else dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
@@ -841,7 +871,13 @@ namespace kws
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
 	= linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
-      dpValidator ()->validate (*stepDP);
+
+      if (!stepDP)
+	{
+	  hppDout (error, "step direct path does not exist");
+	  return KD_ERROR;
+	}
+      else dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
@@ -860,7 +896,13 @@ namespace kws
 
 	  CkwsDirectPathShPtr stepDP 
 	    = linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
-	  dpValidator ()->validate (*stepDP);
+
+	  if (!stepDP)
+	    {
+	      hppDout (error, "step direct path does not exist");
+	      return KD_ERROR;
+	    }
+	  else dpValidator ()->validate (*stepDP);
 
 	  if (!stepDP->isValid ())
 	    {
@@ -1065,7 +1107,13 @@ namespace kws
       CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
       CkwsDirectPathShPtr stepDP 
 	= linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
-      dpValidator ()->validate (*stepDP);
+
+      if (!stepDP)
+	{
+	  hppDout (error, "step direct path does not exist");
+	  return KD_ERROR;
+	}
+      else dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
 	{
@@ -1102,7 +1150,13 @@ namespace kws
 
 	  CkwsDirectPathShPtr stepDP 
 	    = linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
-	  dpValidator ()->validate (*stepDP);
+
+	  if (!stepDP)
+	    {
+	      hppDout (error, "step direct path does not exist");
+	      return KD_ERROR;
+	    }
+	  else dpValidator ()->validate (*stepDP);
 	  
 	  if (!stepDP->isValid ())
 	    {
