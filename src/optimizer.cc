@@ -365,36 +365,18 @@ namespace kws
       inPath ()->getConfiguration (dpIndex () + 1, ithDPEndCfg);
       inPath ()->getConfiguration (dpIndex () + 2, ithNextDPEndCfg);
       
+      double ithDeltaX = ithDPEndCfg.dofValue (0) - ithDPStartCfg.dofValue (0);
+      double ithDeltaY = ithDPEndCfg.dofValue (1) - ithDPStartCfg.dofValue (1);
+      double ithNextDeltaX = ithNextDPEndCfg.dofValue (0) 
+	- ithDPEndCfg.dofValue (0);
+      double ithNextDeltaY = ithNextDPEndCfg.dofValue (1) 
+	- ithDPEndCfg.dofValue (1);
+
+      // Try to align direct path end configuration along the average
+      // direction of the two adjacent direct paths.
       o_config = ithDPEndCfg;
-      int ithStepsNb = stepsNb ();
-      int ithNextStepsNb = (int)(ithNextDP->length () / stepSize ());
-
-      if (ithStepsNb < minStepsNb ())
-	{
-	  // Keep same orientation as ith direct path start.
-	  o_config.dofValue (5, ithDPStartCfg.dofValue (5));
-	}
-      else if (ithNextStepsNb < minStepsNb ())
-	{
-	  // Keep same orientation as ith next direct path end.
-	  o_config.dofValue (5, ithNextDPEndCfg.dofValue (5));
-	}
-      else
-	{
-	  double ithDeltaX = ithDPEndCfg.dofValue (0)
-	    - ithDPStartCfg.dofValue (0);
-	  double ithDeltaY = ithDPEndCfg.dofValue (1)
-	    - ithDPStartCfg.dofValue (1);
-	  double ithNextDeltaX = ithNextDPEndCfg.dofValue (0) 
-	    - ithDPEndCfg.dofValue (0);
-	  double ithNextDeltaY = ithNextDPEndCfg.dofValue (1) 
-	    - ithDPEndCfg.dofValue (1);
-
-	  // Try to align direct path end configuration along the average
-	  // direction of the two adjacent direct paths.
-	  o_config.dofValue (5, (atan2 (ithDeltaY, ithDeltaX) 
-				 + atan2 (ithNextDeltaY, ithNextDeltaX)) / 2);
-	}
+      o_config.dofValue (5, (atan2 (ithDeltaY, ithDeltaX) 
+			     + atan2 (ithNextDeltaY, ithNextDeltaX)) / 2);
       cfgValidator ()->validate (o_config);
 
       if (!o_config.isValid ())
