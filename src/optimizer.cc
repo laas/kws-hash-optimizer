@@ -421,6 +421,11 @@ namespace kws
 	  io_reorientedConfig = originalConfig ();
 	  rotateDPEndConfig (io_reorientedConfig);
 	  
+	  hppDout (notice, "originalConfig: " << incindent << iendl
+		   << io_reorientedConfig.dofValue (0) << iendl
+		   << io_reorientedConfig.dofValue (1) << iendl
+		   << io_reorientedConfig.dofValue (5) << decindent);
+
 	  tryAppendOriginalStepDP (io_reorientedConfig);
       	}
       else
