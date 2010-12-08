@@ -982,6 +982,8 @@ namespace kws
 	      CkwsDirectPathShPtr directPath = 
 		CkwsDirectPath::createCopy (inPath ()->directPath (dpIndex ()));
 	      steps_number_ = (int)(directPath->length () / stepSize ());
+	      if (stepsNb () < minStepsNb ())
+		steps_number_ = 1;
 
 	      // Remove last step direct path from previous direct
 	      // path.
@@ -1019,6 +1021,8 @@ namespace kws
 	  CkwsDirectPathShPtr directPath = 
 	    CkwsDirectPath::createCopy (inPath ()->directPath (dpIndex ()));
 	  steps_number_ = (int)(directPath->length () / stepSize ());
+	  if (stepsNb () < minStepsNb ())
+	    steps_number_ = 1;
 	}
       else step_index_++;
 
