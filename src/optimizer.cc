@@ -905,7 +905,7 @@ namespace kws
     ktStatus Optimizer::
     tryPreviousLateralStepConfig (CkwsConfig& io_reorientedConfig)
     {
-      hppDout (notice, " try previous original step config " << stepIndex ());
+      hppDout (notice, " try previous lateral step config " << stepIndex ());
 
       // Remove last step direct path only if it inside the current
       // direct path.
