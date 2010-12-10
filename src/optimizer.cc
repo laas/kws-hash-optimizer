@@ -401,7 +401,7 @@ namespace kws
 		   << dpIndex ());
 
 	  io_reorientedConfig = originalConfig ();
-	  //rotateDPEndConfig (io_reorientedConfig);
+	  rotateDPEndConfig (io_reorientedConfig);
 	  
 	  tryAppendOriginalStepDP (io_reorientedConfig);
       	}
@@ -566,7 +566,7 @@ namespace kws
 			   << dpIndex ());
 
 		  io_reorientedConfig = originalConfig ();
-		  //rotateDPEndConfig (io_reorientedConfig);
+		  rotateDPEndConfig (io_reorientedConfig);
 		  
 		  tryAppendOriginalStepDP (io_reorientedConfig);
 		}
@@ -955,10 +955,8 @@ namespace kws
     ktStatus Optimizer::
     tryPreviousOriginalStepConfig (CkwsConfig& io_reorientedConfig)
     {
-      hppDout (notice, " try previous original step config " << stepIndex ()
-	       << " in direct path " << dpIndex ());
-      std::cin.get ();
-
+      hppDout (notice, " try previous original step config " << stepIndex ());
+      
       // Remove last step direct path only if it inside the current
       // direct path.
       CkwsConfig originalCfg (device ());
@@ -1094,11 +1092,11 @@ namespace kws
 	    }
 	  // Flip configuration to try other original orientation and
 	  // make new direct path.
-	  // hppDout (warning,
-	  // 	   "Trying step DP with flipped original configuration.");
+	  hppDout (warning,
+		   "Trying step DP with flipped original configuration.");
 	  
-	  // io_reorientedCfg.dofValue (5, io_reorientedCfg.dofValue (5)
-	  // 			     + M_PI);
+	  io_reorientedCfg.dofValue (5, io_reorientedCfg.dofValue (5)
+				     + M_PI);
 
 	  if (lastCfg.isEquivalent (io_reorientedCfg))
 	    {
@@ -1113,8 +1111,8 @@ namespace kws
 	  if (!stepDP->isValid ())
 	    {
 	      // Try original previous config and make new direct path.
-	      // io_reorientedCfg.dofValue (5, io_reorientedCfg.dofValue (5)
-	      // 				 + M_PI);
+	      io_reorientedCfg.dofValue (5, io_reorientedCfg.dofValue (5)
+					 + M_PI);
 	      
 	      hppDout (warning, " try previous original step config "
 		       << stepIndex ());
@@ -1149,8 +1147,6 @@ namespace kws
 		       << stepIndex ());
 	      return KD_ERROR;
 	    }
-	  else hppDout (notice, "appended original step direct path "
-			<< stepIndex () << " of direct path " << dpIndex ());
 	}
 
       return KD_OK;
