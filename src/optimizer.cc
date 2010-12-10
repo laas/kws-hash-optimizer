@@ -915,7 +915,7 @@ namespace kws
       if (stepIndex () == 0)
 	{
 	  hppDout (warning, "cannot remove direct path.");
-	  return tryPreviousOriginalStepConfig (io_reorientedConfig);
+	  return tryOriginalStepConfig (io_reorientedConfig);
 	}
       else
 	{
@@ -1155,6 +1155,11 @@ namespace kws
     ktStatus Optimizer::
     appendLastStepDP ()
     {
+      // Set original configuration value.
+      CkwsConfig originalCfg(device ());
+      getOriginalConfig (originalCfg);
+      *original_config_ = originalCfg;
+
       // Try to orient direct path end configuration frontally.
       CkwsConfig dpEndCfg (device ());
 
