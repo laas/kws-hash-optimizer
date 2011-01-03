@@ -141,19 +141,8 @@ namespace kws
 
     ktStatus Optimizer::doOptimizePath (const CkwsPathShPtr& io_path)
     {
-      // Optimize path first with adaptive shortcut optimizer.
-      CkwsAdaptiveShortcutOptimizerShPtr basicOptimizer
-	= CkwsAdaptiveShortcutOptimizer::create ();
-      basicOptimizer->maxNbLoop (NbOptimizationLoops ());
-
       CkwsPathShPtr copyPath = CkwsPath::createCopy (io_path);
 
-      if (KD_ERROR == basicOptimizer->optimizePath (copyPath))
-	{
-	  hppDout(error, "Basic optimization could not be completed");
-	  return KD_ERROR;
-	}
-      
       // Rebuild optimized path with direct path that take only
       // translation position variables in interpolation and length
       // computation.
