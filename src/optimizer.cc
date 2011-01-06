@@ -31,6 +31,7 @@
 #include <KineoWorks2/kwsValidatorDPCollision.h>
 #include <KineoWorks2/kwsSMLinear.h>
 #include <KineoWorks2/kwsAdaptiveShortcutOptimizer.h>
+#include <KineoWorks2/kwsRandomOptimizer.h>
 
 //FIXME: update later hpp-util in robotpkg to include sstream
 #include <sstream>
@@ -142,9 +143,12 @@ namespace kws
     ktStatus Optimizer::doOptimizePath (const CkwsPathShPtr& io_path)
     {
       // Optimize path first with adaptive shortcut optimizer.
-      CkwsAdaptiveShortcutOptimizerShPtr basicOptimizer
-	= CkwsAdaptiveShortcutOptimizer::create ();
+      CkwsLoopOptimizerShPtr basicOptimizer
+	= CkwsRandomOptimizer::create ();
       basicOptimizer->maxNbLoop (NbOptimizationLoops ());
+      basicOptimizer->minGainStop (0.0);
+
+      hppDout (notice, "maxNbLoop " << basicOptimizer->maxNbLoop ());
 
       CkwsPathShPtr copyPath = CkwsPath::createCopy (io_path);
 
