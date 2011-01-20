@@ -488,11 +488,31 @@ namespace kws
       
       if (!stepDP->isValid ())
 	{
-	  // Try lateral orientation for direct path end configuration.
-	  hppDout (warning,
-		   " Step direct path not valid, trying lateral orientation"
-		   << dpIndex ());
-	  tryOrientLateralDPEndConfig (io_reorientedConfig);
+	  if (dpIndex () == inPath ()->countConfigurations () - 2
+	      && stepIndex () == stepsNb () - 1)
+	    {
+	      // Keep end configuration and try to append original
+	      // step direct path.
+	      hppDout (warning,
+		       "Step direct path not valid, trying previous original "
+		       << dpIndex ());
+	      if (KD_ERROR ==
+		  tryPreviousOriginalStepConfig (io_reorientedConfig))
+		{
+		  hppDout (error,
+			   "Failed to append original previous step direct path "
+			   << stepIndex ());
+		  return KD_ERROR;
+		}
+	    }
+	  else
+	    {
+	      // Try lateral orientation for direct path end configuration.
+	      hppDout (warning,
+		       " Step direct path not valid, trying lateral orientation"
+		       << dpIndex ());
+	      tryOrientLateralDPEndConfig (io_reorientedConfig);
+	    }
 	}
       else
 	{
