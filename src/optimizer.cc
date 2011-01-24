@@ -152,11 +152,12 @@ namespace kws
 
       CkwsPathShPtr copyPath = CkwsPath::createCopy (io_path);
 
-      if (KD_ERROR == basicOptimizer->optimizePath (copyPath))
-	{
-	  hppDout(error, "Basic optimization could not be completed");
-	  return KD_ERROR;
-	}
+      if (NbOptimizationLoops () != 0)
+	if (KD_ERROR == basicOptimizer->optimizePath (copyPath))
+	  {
+	    hppDout(error, "Basic optimization could not be completed");
+	    return KD_ERROR;
+	  }
       
       // Rebuild optimized path with direct path that take only
       // translation position variables in interpolation and length
