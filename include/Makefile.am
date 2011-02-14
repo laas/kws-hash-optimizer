@@ -7,5 +7,8 @@ nobase_include_HEADERS =				\
 		kws/hash-optimizer/io.hh		\
 		kws/hash-optimizer/optimizer.hh		\
 		kws/hash-optimizer/directpath.hh	\
-		kws/hash-optimizer/steeringmethod.hh
+		kws/hash-optimizer/steeringmethod.hh	\
+		kws/hash-optimizer/distance.hh		\
+		kws/hash-optimizer/elliptic-directpath.hh	\
+		kws/hash-optimizer/elliptic-steeringmethod.hh
 

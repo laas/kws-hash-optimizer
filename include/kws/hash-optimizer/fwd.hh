@@ -29,9 +29,11 @@ namespace kws
     class Optimizer;
     class DirectPath;
     class SteeringMethod;
+    class Distance;
     KIT_PREDEF_CLASS (Optimizer);
     KIT_PREDEF_CLASS (DirectPath);
     KIT_PREDEF_CLASS (SteeringMethod);
+    KIT_PREDEF_CLASS (Distance);
   } // end of namespace hashoptimizer 
 } // end of namespace kws.
 
