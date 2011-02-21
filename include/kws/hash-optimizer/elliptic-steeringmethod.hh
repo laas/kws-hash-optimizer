@@ -24,6 +24,7 @@
 #ifndef KWS_HASH_OPTIMIZER_ELLIPTIC_STEERINGMETHOD_HH_
 # define KWS_HASH_OPTIMIZER_ELLIPTIC_STEERINGMETHOD_HH_
 
+#include <KineoWorks2/kwsDistance.h>
 #include <KineoWorks2/kwsSteeringMethod.h>
 
 #include "kws/hash-optimizer/distance.hh"
@@ -42,7 +43,7 @@ namespace kws
     {
     public:
       static EllipticSteeringMethodShPtr
-      create (const DistanceShPtr& i_distance, bool i_oriented = false);
+      create (const DistanceConstShPtr& i_distance, bool i_oriented = false);
       
       virtual CkwsDirectPathShPtr
       makeDirectPath (const CkwsConfig& i_startCfg,
@@ -55,13 +56,13 @@ namespace kws
       ktStatus
       init (const EllipticSteeringMethodWkPtr &i_smWkPtr);
 
-      EllipticSteeringMethod (const DistanceShPtr& i_distance,
+      EllipticSteeringMethod (const DistanceConstShPtr& i_distance,
 			      bool i_oriented = false);
 
     private:
       EllipticSteeringMethodWkPtr attWeakPtr_;
 
-      DistanceShPtr attDistance;
+      DistanceConstShPtr attDistance;
     };
   } // end of namespace hashoptimizer.
 } // end of namespace kws.

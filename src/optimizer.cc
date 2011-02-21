@@ -29,8 +29,8 @@
 #include <KineoWorks2/kwsValidatorCfgCollision.h>
 #include <KineoWorks2/kwsDevice.h>
 #include <KineoWorks2/kwsValidatorDPCollision.h>
-#include <KineoWorks2/kwsSMLinear.h>
-#include <KineoWorks2/kwsAdaptiveShortcutOptimizer.h>
+//#include <KineoWorks2/kwsSMLinear.h>
+//#include <KineoWorks2/kwsAdaptiveShortcutOptimizer.h>
 #include <KineoWorks2/kwsRandomOptimizer.h>
 
 //FIXME: update later hpp-util in robotpkg to include sstream
@@ -40,6 +40,8 @@
 
 #include "kws/hash-optimizer/directpath.hh"
 #include "kws/hash-optimizer/steeringmethod.hh"
+#include "kws/hash-optimizer/distance.hh"
+#include "kws/hash-optimizer/elliptic-steeringmethod.hh"
 #include "kws/hash-optimizer/optimizer.hh"
 
 namespace kws
@@ -142,6 +144,8 @@ namespace kws
 
     ktStatus Optimizer::doOptimizePath (const CkwsPathShPtr& io_path)
     {
+      attDistance = KIT_DYNAMIC_PTR_CAST(Distance const, distance ());
+
       // Optimize path first with adaptive shortcut optimizer.
       CkwsLoopOptimizerShPtr basicOptimizer
 	= CkwsRandomOptimizer::create ();
@@ -464,9 +468,10 @@ namespace kws
 	  return KD_OK;
 	}
 
-      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
+      CkwsSteeringMethodShPtr ellipticSM
+	= EllipticSteeringMethod::create (attDistance);
       CkwsDirectPathShPtr stepDP 
-	= linearSM->makeDirectPath (lastCfg, io_reorientedConfig);
+	= ellipticSM->makeDirectPath (lastCfg, io_reorientedConfig);
       dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
@@ -550,9 +555,10 @@ namespace kws
 					  - M_PI);
 	}
 
-      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
+      CkwsSteeringMethodShPtr ellipticSM
+	= EllipticSteeringMethod::create (attDistance);
       CkwsDirectPathShPtr stepDP 
-	= linearSM->makeDirectPath (lastCfg, io_reorientedConfig);
+	= ellipticSM->makeDirectPath (lastCfg, io_reorientedConfig);
       dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
@@ -571,7 +577,7 @@ namespace kws
 	    }
 
 	  CkwsDirectPathShPtr stepDP 
-	    = linearSM->makeDirectPath (lastCfg, io_reorientedConfig);
+	    = ellipticSM->makeDirectPath (lastCfg, io_reorientedConfig);
 	  dpValidator ()->validate (*stepDP);
 
 	  if (!stepDP->isValid ())
@@ -700,9 +706,10 @@ namespace kws
 	  return KD_ERROR;
 	}
 
-      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
+      CkwsSteeringMethodShPtr ellipticSM
+	= EllipticSteeringMethod::create (attDistance);
       CkwsDirectPathShPtr stepDP 
-	= linearSM->makeDirectPath (i_beginConfig, i_endConfig);
+	= ellipticSM->makeDirectPath (i_beginConfig, i_endConfig);
       dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
@@ -797,9 +804,10 @@ namespace kws
 	  else return tryLateralStepConfig (io_reorientedCfg);
 	}
       
-      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
+      CkwsSteeringMethodShPtr ellipticSM
+	= EllipticSteeringMethod::create (attDistance);
       CkwsDirectPathShPtr stepDP 
-	= linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
+	= ellipticSM->makeDirectPath (lastCfg, io_reorientedCfg);
       dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
@@ -863,9 +871,10 @@ namespace kws
 				       - M_PI);
 	}
       
-      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
+      CkwsSteeringMethodShPtr ellipticSM
+	= EllipticSteeringMethod::create (attDistance);
       CkwsDirectPathShPtr stepDP 
-	= linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
+	= ellipticSM->makeDirectPath (lastCfg, io_reorientedCfg);
       dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
@@ -884,7 +893,7 @@ namespace kws
 	    }
 
 	  CkwsDirectPathShPtr stepDP 
-	    = linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
+	    = ellipticSM->makeDirectPath (lastCfg, io_reorientedCfg);
 	  dpValidator ()->validate (*stepDP);
 
 	  if (!stepDP->isValid ())
@@ -1091,9 +1100,10 @@ namespace kws
 				     - M_PI);
 	}
 
-      CkwsSMLinearShPtr linearSM = CkwsSMLinear::create ();
+      CkwsSteeringMethodShPtr ellipticSM
+	= EllipticSteeringMethod::create (attDistance);
       CkwsDirectPathShPtr stepDP 
-	= linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
+	= ellipticSM->makeDirectPath (lastCfg, io_reorientedCfg);
       dpValidator ()->validate (*stepDP);
       
       if (!stepDP->isValid ())
@@ -1130,7 +1140,7 @@ namespace kws
 	    }
 
 	  CkwsDirectPathShPtr stepDP 
-	    = linearSM->makeDirectPath (lastCfg, io_reorientedCfg);
+	    = ellipticSM->makeDirectPath (lastCfg, io_reorientedCfg);
 	  dpValidator ()->validate (*stepDP);
 	  
 	  if (!stepDP->isValid ())

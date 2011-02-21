@@ -24,7 +24,9 @@
 #ifndef KWS_HASH_OPTIMIZER_OPTIMIZER_HH_
 # define KWS_HASH_OPTIMIZER_OPTIMIZER_HH_
 
-#include "KineoWorks2/kwsPathOptimizer.h"
+#include <KineoWorks2/kwsPathOptimizer.h>
+
+#include "kws/hash-optimizer/distance.hh"
 
 namespace kws
 {
@@ -240,6 +242,8 @@ namespace kws
       unsigned int step_index_;
 
       unsigned int steps_number_;
+
+      DistanceConstShPtr attDistance;
 
       OptimizerWkPtr optimizer_;
     };

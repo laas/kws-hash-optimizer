@@ -11,6 +11,8 @@
 #ifndef KWS_HASH_OPTIMIZER_DISTANCE_HH
 # define KWS_HASH_OPTIMIZER_DISTANCE_HH
 
+#include <vector>
+
 #include <KineoWorks2/kwsDistance.h>
 
 # include <hpp/walkfootplanner/fwd.hh>
@@ -22,12 +24,15 @@ namespace kws
   {
     KIT_PREDEF_CLASS (Distance);
 
+    typedef std::vector<double> SpeedVector;
+
     /**
        \brief Distance that returns a higher cost to lateral and backwards walking.
     */
     class Distance : public CkwsDistance
     {
     public:
+      
       virtual ~Distance();
       /**
 	 \brief Create an object and return a shared pointer.
@@ -36,6 +41,15 @@ namespace kws
 				   const double& i_vMinX,
 				   const double& i_vMaxX,
 				   const double& i_vMaxY);
+
+      /**
+	 \brief Get the samled configuration at given step index.
+       */
+      void
+      sampleConfiguration (const CkwsDirectPathShPtr& i_directPath,
+			   const unsigned int i_stepsNb,
+			   const unsigned int i_stepIndex,
+			   CkwsConfig& o_cfg) const;
 
       /**
 	 \brief Compute elementary time cost on the direct path at a
@@ -55,6 +69,18 @@ namespace kws
 		      const CkwsConfig &i_cfg2,
 		      const unsigned int i_stepsNb,
 		      const unsigned int i_stepIndex) const;
+
+      /**
+	 \brief Same as \sa elementaryCost, but also gives the sampled
+	 start configuration and the speed vector.
+       */
+      virtual double
+      elementaryCost (const CkwsConfig &i_cfg1,
+		      const CkwsConfig &i_cfg2,
+		      const unsigned int i_stepsNb,
+		      const unsigned int i_stepIndex,
+		      CkwsConfig& o_cfg,
+		      SpeedVector& o_vector) const;
 
       /**
 	 \brief Compute time distance between two configurations.

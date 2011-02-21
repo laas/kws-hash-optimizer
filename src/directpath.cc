@@ -25,6 +25,9 @@
 
 #include <math.h>
 
+#include <KineoWorks2/kwsDof.h>
+#include <KineoWorks2/kwsDevice.h>
+
 #include "kws/hash-optimizer/directpath.hh"
 
 namespace kws
@@ -95,34 +98,48 @@ namespace kws
 
       return vecNorm;
     }
-      
+    
+    double DirectPath::circularDistance(double i_a1, double i_a2) const 
+    {
+      const double angle = i_a2 - i_a1;
+  
+      double result = fmod (angle, 2.*M_PI);
+  
+      // 'result' is now inside ]-2.pi, 2.pi[
+  
+      if (result >= M_PI)
+	{
+	  result -= 2.*M_PI;
+	}
+      else if (result < -M_PI)
+	{
+	  result += 2.*M_PI;
+	}
+  
+      return result;
+    }
+  
     void DirectPath::
     interpolate (double i_s, CkwsConfig& o_cfg) const
     {
-      CkwsConfig startCfg (device ());
-      getConfigAtStart (startCfg);
-      CkwsConfig endCfg (device ());
-      getConfigAtEnd (endCfg);
+      const CkwsConfig startCfg = startConfiguration ();
+      const CkwsConfig endCfg = endConfiguration ();
+      
+      for (unsigned int i = 0; i < 6; i++)
+	{
+	  const CkwsDofShPtr dof = device ()->dof (i);
+	  
+	  if (dof->isRevolute () == true && dof->isBounded () == false)
+	    o_cfg.dofValue (i, startCfg.dofValue (i)
+			    + i_s / length ()
+			    * circularDistance (startCfg.dofValue (i),
+						endCfg.dofValue (i)));
+	  else
+	    o_cfg.dofValue (i, (1 - i_s / length ()) * startCfg.dofValue (i)
+			    + i_s / length () * endCfg.dofValue (i));
+	}
 
-      double delta0 = endCfg.dofValue (0) - startCfg.dofValue (0);
-      double delta1 = endCfg.dofValue (1) - startCfg.dofValue (1);
-      double delta2 = endCfg.dofValue (2) - startCfg.dofValue (2);
-      double delta3 = endCfg.dofValue (3) - startCfg.dofValue (3);
-      double delta4 = endCfg.dofValue (4) - startCfg.dofValue (4);
-      double delta5 = endCfg.dofValue (5) - startCfg.dofValue (5);
-
-      o_cfg.dofValue (0, startCfg.dofValue (0)
-		      + i_s * delta0 / length ());
-      o_cfg.dofValue (1, startCfg.dofValue (1)
-		      + i_s * delta1 / length ());
-      o_cfg.dofValue (2, startCfg.dofValue (2)
-		      + i_s * delta2 / length ());
-      o_cfg.dofValue (3, startCfg.dofValue (3)
-		      + i_s * delta3 / length ());
-      o_cfg.dofValue (4, startCfg.dofValue (4)
-		      + i_s * delta4 / length ());
-      o_cfg.dofValue (5, startCfg.dofValue (5)
-		      + i_s * delta5 / length ());
+      return;
     }
       
     void DirectPath:: 

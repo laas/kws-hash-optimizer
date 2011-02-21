@@ -60,6 +60,8 @@ namespace kws
     protected:
       virtual double
       computePrivateLength () const;
+
+      virtual double circularDistance(double i_a1, double i_a2) const;
       
       virtual void
       interpolate (double i_s, CkwsConfig& o_cfg) const;

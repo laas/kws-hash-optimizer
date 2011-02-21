@@ -24,9 +24,13 @@
 #ifndef KWS_HASH_OPTIMIZER_ELLIPTIC_DIRECTPATH_HH_
 # define KWS_HASH_OPTIMIZER_ELLIPTIC_DIRECTPATH_HH_
 
+#include <vector>
+#include <boost/tuple/tuple.hpp>
+
+#include <KineoWorks2/kwsDistance.h>
 #include <KineoWorks2/kwsDirectPath.h>
 
-#include <kws/hash-optimizer/distance.hh>
+#include "kws/hash-optimizer/distance.hh"
 
 namespace kws
 {
@@ -38,6 +42,11 @@ namespace kws
 
     KIT_PREDEF_CLASS (EllipticDirectPath);
 
+    typedef boost::
+    tuple<double, CkwsConfig, SpeedVector> TimeSample;
+    
+    typedef std::vector<TimeSample> PiecewiseSpeedVector;
+
     class EllipticDirectPath : public CkwsDirectPath
     {
     public:
@@ -46,7 +55,7 @@ namespace kws
       static EllipticDirectPathShPtr
       create (const CkwsConfig& i_start,
 	      const CkwsConfig& i_end,
-	      const DistanceShPtr& i_distance,
+	      const DistanceConstShPtr& i_distance,
 	      const CkwsSteeringMethodShPtr& i_steeringMethod);    
       
       static EllipticDirectPathShPtr
@@ -59,17 +68,23 @@ namespace kws
       maxAbsoluteDerivative(double i_from,
 			    double i_to,
 			    std::vector<double>& o_derivative) const;
+
+      virtual void buildPiecewiseSpeedVector (const CkwsConfig& i_start,
+					      const CkwsConfig& i_end,
+					      PiecewiseSpeedVector& o_vector) const;
       
     protected:
       virtual double
       computePrivateLength () const;
       
+      virtual double circularDistance(double i_a1, double i_a2) const;
+
       virtual void
       interpolate (double i_s, CkwsConfig& o_cfg) const;
       
       EllipticDirectPath (const CkwsConfig& i_start,
 			  const CkwsConfig& i_end,
-			  const DistanceShPtr& i_distance,
+			  const DistanceConstShPtr& i_distance,
 			  const CkwsSteeringMethodShPtr& i_steeringMethod);
       
       ktStatus
@@ -78,7 +93,9 @@ namespace kws
     private:
       EllipticDirectPathWkPtr attWeakPtr_;
 
-      DistanceShPtr attDistance;
+      DistanceConstShPtr attDistance_;
+
+      PiecewiseSpeedVector attPiecewiseSpeedVector_;
     };
   } // end of namespace hashoptimizer.
 } // end of namespace kws.

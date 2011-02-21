@@ -56,9 +56,10 @@ namespace kws
     }
  
     EllipticSteeringMethodShPtr EllipticSteeringMethod::
-    create (const DistanceShPtr& i_distance, bool i_oriented)
+    create (const DistanceConstShPtr& i_distance, bool i_oriented)
     {
-      EllipticSteeringMethod* ptr = new EllipticSteeringMethod(i_distance, i_oriented);          
+      EllipticSteeringMethod* ptr
+	= new EllipticSteeringMethod (i_distance, i_oriented);
       EllipticSteeringMethodShPtr shPtr(ptr);
       
       if(ptr->init(shPtr) != KD_OK)
@@ -68,7 +69,7 @@ namespace kws
     }
 
     EllipticSteeringMethod::
-    EllipticSteeringMethod (const DistanceShPtr& i_distance, bool i_oriented)
+    EllipticSteeringMethod (const DistanceConstShPtr& i_distance, bool i_oriented)
   : CkwsSteeringMethod::CkwsSteeringMethod ()
     {
       attDistance = i_distance;

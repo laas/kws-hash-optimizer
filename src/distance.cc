@@ -72,6 +72,25 @@ namespace kws
       return KD_OK;
     }
 
+    void Distance::
+    sampleConfiguration (const CkwsDirectPathShPtr& i_directPath,
+			 const unsigned int i_stepsNb,
+			 const unsigned int i_stepIndex,
+			 CkwsConfig& o_cfg) const
+    {
+      if (i_stepIndex < i_stepsNb)
+	{
+	  i_directPath->getConfigAtDistance (i_stepIndex * attIntegrationStep,
+					     o_cfg);
+	}
+      else
+	{	    
+	  i_directPath->getConfigAtEnd (o_cfg);
+	}
+
+      return;
+    }
+
     double Distance::
     elementaryCost (const CkwsConfig &i_cfg1,
 		    const CkwsConfig &i_cfg2,
@@ -85,13 +104,17 @@ namespace kws
 
       CkwsConfig sampleStartCfg (boxDevice);
       directPath->getConfigAtDistance (i_stepIndex * attIntegrationStep,
-      					 sampleStartCfg);
+				       sampleStartCfg);
       CkwsConfig sampleEndCfg (boxDevice);
-      if (i_stepIndex < i_stepsNb - 1)
-	directPath->getConfigAtDistance ((i_stepIndex + 1) * attIntegrationStep,
-					   sampleEndCfg);
+      if (i_stepIndex < i_stepsNb)
+      	directPath->getConfigAtDistance ((i_stepIndex + 1) * attIntegrationStep,
+      					   sampleEndCfg);
       else
-	directPath->getConfigAtEnd (sampleEndCfg);
+      	directPath->getConfigAtEnd (sampleEndCfg);
+
+      CkwsDirectPathShPtr elementaryDP
+	= steeringMethod->makeDirectPath (sampleStartCfg, sampleEndCfg);
+      const double integrationStep = elementaryDP->length ();
 
       // Compute frontal and lateral speeds.
       const double dx = sampleEndCfg.dofValue (0)
@@ -113,12 +136,74 @@ namespace kws
       vf = vf >= 0 ?
 	1 / sqrt (1 / (attVMaxX * attVMaxX)
 		  + (tangent * tangent) / (attVMaxY * attVMaxY))
-	: 1 / sqrt (1 / (attVMinX * attVMinX)
+	: - 1 / sqrt (1 / (attVMinX * attVMinX)
 		    + (tangent * tangent) / (attVMaxY * attVMaxY));
       vlat = tangent * vf;
-	  	  
+      
       // Compute elementary walk time.
-      const double dt = attIntegrationStep / sqrt (vf * vf + vlat * vlat);
+      const double dt = integrationStep / sqrt (vf * vf + vlat * vlat);
+
+      return dt; 
+    }
+
+    double Distance::
+    elementaryCost (const CkwsConfig &i_cfg1,
+		    const CkwsConfig &i_cfg2,
+		    const unsigned int i_stepsNb,
+		    const unsigned int i_stepIndex,
+		    CkwsConfig& o_cfg,
+		    SpeedVector& o_speed) const
+    {
+      CkwsSteeringMethodShPtr steeringMethod = SteeringMethod::create ();
+      CkwsDirectPathShPtr directPath
+	= steeringMethod->makeDirectPath (i_cfg1, i_cfg2);
+      CkwsDeviceShPtr boxDevice = directPath->device ();
+
+      CkwsConfig sampleStartCfg (boxDevice);
+      directPath->getConfigAtDistance (i_stepIndex * attIntegrationStep,
+				       sampleStartCfg);
+      o_cfg = sampleStartCfg;
+
+      CkwsConfig sampleEndCfg (boxDevice);
+      if (i_stepIndex < i_stepsNb)
+      	directPath->getConfigAtDistance ((i_stepIndex + 1) * attIntegrationStep,
+      					   sampleEndCfg);
+      else
+      	directPath->getConfigAtEnd (sampleEndCfg);
+
+      CkwsDirectPathShPtr elementaryDP
+	= steeringMethod->makeDirectPath (sampleStartCfg, sampleEndCfg);
+      const double integrationStep = elementaryDP->length ();
+
+      // Compute frontal and lateral speeds.
+      const double dx = sampleEndCfg.dofValue (0)
+	- sampleStartCfg.dofValue (0);
+      const double dy = sampleEndCfg.dofValue (1)
+	- sampleStartCfg.dofValue (1);
+
+      const double theta = sampleStartCfg.dofValue (5);
+
+      double vf = dx * std::cos (theta)
+	+ dy * std::sin (theta);
+      double vlat =  dy * std::cos (theta)
+	- dx * std::sin (theta);
+
+      // Compute speed vector intersection with the speed cosntraint
+
+      const double tangent = vlat / vf;
+	  
+      vf = vf >= 0 ?
+	1 / sqrt (1 / (attVMaxX * attVMaxX)
+		  + (tangent * tangent) / (attVMaxY * attVMaxY))
+	: - 1 / sqrt (1 / (attVMinX * attVMinX)
+		      + (tangent * tangent) / (attVMaxY * attVMaxY));
+      vlat = tangent * vf;
+      
+      o_speed.push_back (vf);
+      o_speed.push_back (vlat);
+	  
+      // Compute elementary walk time.
+      const double dt = integrationStep / sqrt (vf * vf + vlat * vlat);
 
       return dt; 
     }
@@ -130,7 +215,7 @@ namespace kws
       double deltaY = i_cfg2.dofValue (1) - i_cfg1.dofValue (1);
       double vecNorm = sqrt (pow (deltaX, 2) + pow (deltaY, 2));
 
-      const unsigned int stepsNb = (int)(vecNorm / attIntegrationStep);
+      const unsigned int stepsNb = ceil (vecNorm / attIntegrationStep);
       unsigned int stepIndex = 0;
       double timeDistance = 0.;
 
