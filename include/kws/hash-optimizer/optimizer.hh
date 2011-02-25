@@ -24,6 +24,9 @@
 #ifndef KWS_HASH_OPTIMIZER_OPTIMIZER_HH_
 # define KWS_HASH_OPTIMIZER_OPTIMIZER_HH_
 
+#include <set>
+#include <boost/tuple/tuple.hpp>
+
 #include <KineoWorks2/kwsPathOptimizer.h>
 
 #include "kws/hash-optimizer/distance.hh"
@@ -37,10 +40,26 @@ namespace kws
     /// http://www.stack.nl/~dimitri/doxygen/
 
     KIT_PREDEF_CLASS (Optimizer);
+   
+    typedef std::pair<CkwsNodeShPtr, double> NodeAndDistance;
 
+    typedef boost::tuple<double, double, double> Cost;
+ 
+    typedef std::pair<NodeAndDistance, Cost> NodeAndCost;
+
+    typedef std::set<NodeAndDistance> NodeAndDistanceSet;
+
+    typedef std::map<NodeAndDistance, Cost> NodeAndCostSet;
+
+    typedef std::map<int, double> OrientationAngles;
+    
     class Optimizer : public CkwsPathOptimizer
     {
     public:
+
+      // FIXME {doxygen}
+      enum OrientationState {FRONTAL, LATERAL_1, LATERAL_2};
+
       virtual ktStatus init (const OptimizerWkPtr& i_weakPtr);
 
       /// \sa Optimizer ()
@@ -56,7 +75,7 @@ namespace kws
       unsigned int NbOptimizationLoops ();
 
       /// \brief Get value of the hashing interval step_size_.
-      double stepSize ();
+      double stepSize () const;
 
       /// \brief Get value of the minimum number of steps
       /// min_steps_number_ in a direct path under which the direct
@@ -101,8 +120,6 @@ namespace kws
       unsigned int stepsNb () const;
 
     protected:
-      // FIXME {doxygen}
-      enum {FRONTAL, LATERAL, ORIGINAL};
 
       /// \brief Non-atomic implementation of Hash Optimizer
       ///
@@ -115,7 +132,42 @@ namespace kws
       virtual ktStatus doOptimizePath (const CkwsPathShPtr& io_path);
 
       // FIXME {doxygen}
-      virtual ktStatus alignPathConfigs ();
+      virtual ktStatus aStar (const CkwsPathShPtr& i_path);
+
+      // FIXME {doxygen}
+      virtual void
+      showRoadmapNodes (const CkwsRoadmapShPtr& i_roadmap) const;
+
+      virtual void
+      showRoadmapCC (const CkwsRoadmapShPtr& i_roadmap) const;
+
+      virtual void 
+      showRoadmapEdges (const CkwsRoadmapShPtr& i_roadmap) const;
+
+      // FIXME {doxygen}
+      virtual double
+      heuristicEstimate (const NodeAndCost& i_nodeAndCost1,
+			 const NodeAndDistance& i_nodeAndDistance2,
+			 const CkwsPathShPtr& i_path);
+      
+      // FIXME {doxygen}
+      virtual NodeAndCost bestPair (NodeAndCostSet& i_set) const;
+
+      // FIXME {doxygen}
+      virtual ktStatus
+      expand (const NodeAndCost& i_nodeAndCost,
+	      const CkwsPathShPtr& i_path,
+	      CkwsRoadmapShPtr& io_graph,
+	      NodeAndCostSet& o_set);
+
+      // FIXME {doxygen}
+      virtual double nodeDistance (const CkwsNodeShPtr& i_node1,
+				   const CkwsNodeShPtr& i_node2) const;
+      
+      // FIXME {doxygen}
+      virtual ktStatus makeTangentConfig (CkwsConfig& io_cfg,
+					  const double distance,
+					  const CkwsPathShPtr& i_path);
 
       /// \brief retrieves collision validators from input path.
       ///
@@ -129,7 +181,7 @@ namespace kws
       virtual ktStatus
       retrieveValidators ();
 
-      // FIXME {doxygen}
+      /*      // FIXME {doxygen}
       virtual ktStatus appendHashedDP ();
 
       // FIXME {doxygen}
@@ -204,7 +256,7 @@ namespace kws
       tryAppendOriginalStepDP (CkwsConfig& io_reorientedCfg);
 
       // FIXME: doxygen
-      virtual ktStatus appendLastStepDP ();
+      virtual ktStatus appendLastStepDP ();*/
       
       /// \brief Constructor
       ///
@@ -244,6 +296,8 @@ namespace kws
       unsigned int steps_number_;
 
       DistanceConstShPtr attDistance;
+
+      OrientationAngles attOrientationAngles;
 
       OptimizerWkPtr optimizer_;
     };

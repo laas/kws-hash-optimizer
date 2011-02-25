@@ -1,4 +1,4 @@
-// Copyright (C) 2010 by Antonio El Khoury.
+// Copyright (C) 2010-2011 by Antonio El Khoury.
 //
 // This file is part of the kws-hash-optimizer.
 //
@@ -29,9 +29,10 @@
 #include <KineoWorks2/kwsValidatorCfgCollision.h>
 #include <KineoWorks2/kwsDevice.h>
 #include <KineoWorks2/kwsValidatorDPCollision.h>
-//#include <KineoWorks2/kwsSMLinear.h>
-//#include <KineoWorks2/kwsAdaptiveShortcutOptimizer.h>
 #include <KineoWorks2/kwsRandomOptimizer.h>
+#include <KineoWorks2/kwsRoadmap.h>
+#include <KineoWorks2/kwsNode.h>
+#include <KineoWorks2/kwsEdge.h>
 
 //FIXME: update later hpp-util in robotpkg to include sstream
 #include <sstream>
@@ -92,7 +93,7 @@ namespace kws
       return min_steps_number_;
     }
 
-    double Optimizer::stepSize ()
+    double Optimizer::stepSize () const
     {
       return step_size_;
     }
@@ -146,40 +147,35 @@ namespace kws
     {
       attDistance = KIT_DYNAMIC_PTR_CAST(Distance const, distance ());
 
-      // Optimize path first with adaptive shortcut optimizer.
-      CkwsLoopOptimizerShPtr basicOptimizer
+      // Optimize path first with random optimizer.
+      CkwsLoopOptimizerShPtr randomOptimizer
 	= CkwsRandomOptimizer::create ();
-      basicOptimizer->maxNbLoop (NbOptimizationLoops ());
-      basicOptimizer->minGainStop (0.0);
-
-      hppDout (notice, "maxNbLoop " << basicOptimizer->maxNbLoop ());
-
-      CkwsPathShPtr copyPath = CkwsPath::createCopy (io_path);
+      randomOptimizer->maxNbLoop (NbOptimizationLoops ());
+      randomOptimizer->minGainStop (0.0);
 
       if (NbOptimizationLoops () != 0)
-	if (KD_ERROR == basicOptimizer->optimizePath (copyPath))
+	if (KD_ERROR == randomOptimizer->optimizePath (io_path))
 	  {
-	    hppDout(error, "Basic optimization could not be completed");
+	    hppDout(error, "Random optimization could not be completed");
 	    return KD_ERROR;
 	  }
       
-      // Rebuild optimized path with direct path that take only
+      // Rebuild randomly optimized path with direct path that take only
       // translation position variables in interpolation and length
       // computation.
+      // FIXME: make it work for B-spline paths as well?
       CkwsConfig dpStartCfg (device ());
       CkwsConfig dpEndCfg (device ());
       CkwsSteeringMethodShPtr steeringMethod = SteeringMethod::create ();
       i_path_ = CkwsPath::create (device ());
-      for (unsigned int i = 0; i < copyPath->countConfigurations () - 1; i++)
+      for (unsigned int i = 0; i < io_path->countConfigurations () - 1; i++)
 	{
-	  copyPath->getConfiguration (i, dpStartCfg);
-	  copyPath->getConfiguration (i + 1, dpEndCfg);
+	  io_path->getConfiguration (i, dpStartCfg);
+	  io_path->getConfiguration (i + 1, dpEndCfg);
 
 	  CkwsDirectPathShPtr directPath = 
 	    steeringMethod->makeDirectPath (dpStartCfg, dpEndCfg);
 
-	  hppDout (notice, directPath->length ());
-	  
 	  i_path_->appendDirectPath (directPath);
 	}
 
@@ -189,41 +185,469 @@ namespace kws
       inPath ()->getConfigAtStart (startCfg);
       outPath ()->setInitialConfig (startCfg);
       original_config_ = CkwsConfig::create (device ());
+      retrieveValidators ();
 
-      if (KD_ERROR == alignPathConfigs ())
+      if (KD_ERROR == aStar (inPath ()))
 	{
 	  hppDout(error, "Hash optimization could not be completed");
 	}
       
-      hppDout (notice, "outPath number of nodes: " 
-	       << outPath ()->countConfigurations ());
       *io_path = *outPath ();
 
       return KD_OK;
     }
 
-    ktStatus Optimizer::alignPathConfigs ()
+    ktStatus Optimizer::aStar (const CkwsPathShPtr& i_path)
     {
-      // Retrieve collision validators.
-      if (KD_ERROR == retrieveValidators ())
-	return KD_ERROR;
-    
-      unsigned int configsNumber = inPath ()->countConfigurations ();
-      
-      // Go through all direct paths.
-      for (dp_index_ = 0; dp_index_ < configsNumber - 1; dp_index_++)
-	{
-	  hppDout (notice, "alignPathConfigs: " << dp_index_);
+      // Variables initialization.
+      //hppDout (notice, "Initializing variables.");
+      NodeAndCostSet closedSet;
+      NodeAndCostSet openSet;
 
-	  // Hash direct path and reorient configurations.
-	  if (KD_ERROR == appendHashedDP ())
+      CkwsConfig startCfg (device ());
+      i_path->getConfigAtStart (startCfg);
+      CkwsNodeShPtr startNode = CkwsNode::create (startCfg);
+
+      CkwsConfig endCfg (device ());
+      i_path->getConfigAtEnd (endCfg);
+      CkwsNodeShPtr endNode = CkwsNode::create (endCfg);
+      
+      NodeAndDistance startNodeAndDistance (startNode, 0.);
+     
+      double g = 0.;
+      double h = heuristicEstimate (NodeAndCost (startNodeAndDistance,
+						 Cost (0., 0., 0.)),
+				    startNodeAndDistance,
+				    i_path);
+      double f = h;
+      
+      Cost startCost (g, h, f);
+      openSet.insert (NodeAndCost (startNodeAndDistance, startCost));
+      
+      CkwsRoadmapShPtr graph = CkwsRoadmap::create (device ());
+      graph->addNode (startNode);
+      graph->addNode (endNode);
+
+      // Run A* search.
+      // hppDout (notice, "Starting A* search.");
+      while (!openSet.empty ())
+      	{
+	  // hppDout (notice, "Finding best pair");
+      	  NodeAndCost pair = bestPair (openSet);
+
+	  NodeAndDistance nodeAndDistance = pair.first;
+      	  CkwsNodeShPtr node = nodeAndDistance.first;
+      	  double g = boost::get<0> (pair.second);
+      	  double h = boost::get<1> (pair.second);
+      	  double f = boost::get<2> (pair.second);
+
+	  // hppDout (notice, "openset:");
+	  // for (NodeAndCostSet::iterator nodeIt = openSet.begin ();
+      	  //      nodeIt != openSet.end ();
+      	  //      nodeIt++)
+	  //   {
+	  //     hppDout (notice, ((*nodeIt).first).first->config ().dofValue (0) << "\t"
+	  // 	       << ((*nodeIt).first).first->config ().dofValue (1) << "\t"
+	  // 	       << ((*nodeIt).first).first->config ().dofValue (5));
+	  //   }
+	  
+	  // hppDout (notice, "best g " << g);
+	  // hppDout (notice, "best configuration " << incindent << iendl
+	  // 	   << (pair.first).first->config ().dofValue (0) << iendl
+	  // 	   << (pair.first).first->config ().dofValue (1) << iendl
+	  // 	   << (pair.first).first->config ().dofValue (5)
+	  // 	   << decindent << iendl
+	  // 	   << "evaluation functions " << incindent << iendl
+	  // 	   << g << iendl << h << iendl << f
+	  // 	   << "Roadmap edges nb " << graph->countEdges ()
+	  // 	   << decindent << iendl);
+	  
+	  // showRoadmapCC (graph);
+	  
+	  // std::cin.get ();
+
+      	  if (node->config () == endNode->config ())
+      	    {
+	      std::list<CkwsEdgeShPtr> edges;
+	      
+	      // hppDout (notice, "number of edges going in end node "
+	      // 	       << endNode->countInEdges ());
+
+      	      bool pathFound = graph->findPath (startNode, endNode, attDistance,
+      						o_path_, edges);
+      	      if (pathFound)
+      		return KD_OK;
+      	      else
+      		{
+      		  hppDout (error, "Search completed but no path was found.");
+      		  return KD_ERROR;
+      		}
+      	    }
+
+      	  openSet.erase (pair.first);
+      	  closedSet.insert (pair);
+
+	  // hppDout (notice, "Expanding node.");
+      	  NodeAndCostSet neighborNodes;
+	  expand (pair, i_path, graph, neighborNodes);
+
+	  // Update evaluation function values.
+	  // hppDout(notice, "Updating node evaluation functions.");
+      	  for (NodeAndCostSet::iterator nodeIt = neighborNodes.begin ();
+      	       nodeIt != neighborNodes.end ();
+      	       nodeIt++)
+      	    {
+	      // hppDout (notice, "Exploring expanded node");
+      	      NodeAndCost loopNodeAndCost = *nodeIt;
+	      bool isBetter;
+
+      	      if (closedSet.find (loopNodeAndCost.first) != closedSet.end ())
+		continue;
+	      
+	      const double newG = g
+		+ nodeDistance (node, (loopNodeAndCost.first).first);
+	      
+	      NodeAndCostSet::iterator nodeAndCostIt
+		= openSet.find (loopNodeAndCost.first);
+
+      	      if (nodeAndCostIt == openSet.end ())
+      	      	{
+		  // hppDout (notice, "Inserting new node in open set.");
+      	      	  openSet.insert (loopNodeAndCost);
+		  isBetter = true;
+      	      	}
+	      else 
+		{
+		  double loopG = boost::get<0> ((*nodeAndCostIt).second);
+		  
+		  if (newG < loopG)
+		    isBetter = true;
+		  else
+		    isBetter = false;
+		  
+		  if (isBetter)
+		    {
+		      double newH = heuristicEstimate (pair,
+						       (*nodeAndCostIt).first,
+						       i_path);
+		      double newF = newG + newH;
+		      
+		      openSet.erase ((*nodeAndCostIt).first);
+		      openSet.insert (NodeAndCost ((*nodeAndCostIt).first,
+						   Cost (newG, newH, newF)));
+		    }
+		}
+      	    }
+      	}
+
+      return KD_ERROR;
+    }
+
+    void Optimizer::
+    showRoadmapNodes (const CkwsRoadmapShPtr& i_roadmap) const
+    {
+      hppDout (notice, "Roadmap node configurations: " << incindent);
+
+      for (unsigned int rank = 0; rank < i_roadmap->countNodes (); rank++)
+	{
+	  CkwsConfig nodeCfg = i_roadmap->node (rank)->config ();
+	  
+	  hppDout (notice, rank << "\t" << nodeCfg.dofValue (0) << "\t"
+		   << nodeCfg.dofValue (1) << "\t"<< nodeCfg.dofValue (5));
+	}
+    }
+
+    void Optimizer::
+    showRoadmapEdges (const CkwsRoadmapShPtr& i_roadmap) const
+    {
+      hppDout (notice, "Roadmap nodes: " << incindent);
+
+      for (unsigned int nodeRank = 0;
+	   nodeRank < i_roadmap->countNodes ();
+	   nodeRank++)
+	{
+	  hppDout (notice, "Roadmap node edges: " << incindent);
+		
+	  CkwsNodeShPtr node = i_roadmap->node (nodeRank);
+
+	  for (unsigned int edgeRank = 0;
+	       edgeRank < node->countOutEdges ();
+	       edgeRank++)
 	    {
-	      hppDout(error, "Could not append modified direct path "
-		      << dpIndex ());
-	      return KD_ERROR;
+	      CkwsConfig nodeCfg
+		= node->outEdge (edgeRank)->endNode ()->config ();
+	      
+	      hppDout (notice, edgeRank << "\t" << nodeCfg.dofValue (0) << "\t"
+		   << nodeCfg.dofValue (1) << "\t"<< nodeCfg.dofValue (5));
+	    }
+	}
+    }
+
+    void Optimizer::
+    showRoadmapCC (const CkwsRoadmapShPtr& i_roadmap) const
+    {
+      hppDout (notice, "Roadmap connected components " << incindent);
+      
+      for (unsigned int rank = 0;
+	   rank < i_roadmap->countConnectedComponents (); rank++)
+	{
+	  unsigned int nodeNb
+	    = i_roadmap->connectedComponent (rank)->countNodes ();
+	  
+	  hppDout (notice, rank << "\t" << nodeNb);
+	}
+    }
+
+    double Optimizer::
+    heuristicEstimate (const NodeAndCost& i_nodeAndCost1,
+		       const NodeAndDistance& i_nodeAndDistance2,
+		       const CkwsPathShPtr& i_path)
+    {
+      double distance2 = i_nodeAndDistance2.second;
+      
+      if (distance2 == i_path->length ())
+	return 0.;
+
+      const double distance3 = distance2 + stepSize ();
+      
+      const CkwsConfig cfg1 = i_nodeAndCost1.first.first->config ();
+      const CkwsConfig cfg2 = i_nodeAndDistance2.first->config ();
+
+      CkwsConfig frontalCfg2 (cfg2);
+      makeTangentConfig (frontalCfg2, distance2, i_path);
+
+      double heuristicEstimate2 = 0.;
+
+      if (i_nodeAndDistance2.second == 0.)
+	{
+	  CkwsConfig endCfg (device ());
+	  i_path->getConfigAtEnd (endCfg);
+
+	  if (distance3 < i_path->length ())
+	    {
+	      CkwsConfig frontalCfg (device ());
+	      i_path->getConfigAtDistance (distance3, frontalCfg);
+	      makeTangentConfig (frontalCfg, distance3, i_path);
+	      
+	      heuristicEstimate2 = attDistance->distance (cfg2, frontalCfg);
+
+	      double nextDistance = distance3 + stepSize ();
+	      
+	      while (nextDistance < i_path->length ())
+		{
+		  CkwsConfig nextFrontalCfg (device ());
+		  i_path->getConfigAtDistance (nextDistance, nextFrontalCfg);
+		  makeTangentConfig (nextFrontalCfg, nextDistance, i_path);
+
+		  heuristicEstimate2
+		    += attDistance->distance (frontalCfg, nextFrontalCfg);
+
+		  frontalCfg = nextFrontalCfg;
+
+		  nextDistance +=stepSize ();
+		}
+
+	      heuristicEstimate2 += attDistance->distance (frontalCfg, endCfg);
+	    }
+	  else
+	    {
+	      heuristicEstimate2 = attDistance->distance (cfg2, endCfg);
+	    }
+	}
+      else
+	{
+	  const double heuristicEstimate1
+	    = boost::get<1> (i_nodeAndCost1.second);
+	  // hppDout (notice, heuristicEstimate1);
+	  
+	  heuristicEstimate2 = heuristicEstimate1
+	    - attDistance->distance (cfg1, frontalCfg2);
+
+	  if (distance3 < i_path->length ())
+	    {
+	      CkwsConfig frontalCfg3 (device ());
+	      i_path->getConfigAtDistance (distance3, frontalCfg3);
+	      makeTangentConfig (frontalCfg3, distance3, i_path);
+
+	      heuristicEstimate2 
+		+= - attDistance->distance (frontalCfg2, frontalCfg3)
+		+ attDistance->distance (cfg2, frontalCfg3);
+	      // hppDout (notice, heuristicEstimate2);
 	    }
 	}
       
+      return heuristicEstimate2;
+    }
+
+    NodeAndCost Optimizer::bestPair (NodeAndCostSet& i_set) const 
+    {
+      NodeAndCostSet::iterator bestIt = i_set.begin ();
+      double minF = boost::get <2> ((*bestIt).second);
+      
+      for (NodeAndCostSet::iterator it = i_set.begin ();
+	   it != i_set.end ();
+	   it++)
+	{
+	  double currentF = boost::get <2> ((*it).second);
+	  
+	  if (currentF < minF)
+	    {
+	      bestIt = it;
+	      minF = currentF;
+	    }
+	}
+      
+      return *(bestIt);
+    }
+
+    ktStatus Optimizer::
+    expand (const NodeAndCost& i_nodeAndCost,
+	    const CkwsPathShPtr& i_path,
+	    CkwsRoadmapShPtr& io_graph,
+	    NodeAndCostSet& o_set)
+    {
+      double tryDistance = (i_nodeAndCost.first).second + stepSize ();
+
+      double distance = tryDistance < i_path->length () ?
+	tryDistance :
+	i_path->length ();
+
+      CkwsConfig sampleCfg (device ());
+      i_path->getConfigAtDistance (distance, sampleCfg);
+      
+      CkwsConfig previousCfg (((i_nodeAndCost.first).first)->config ());
+
+      CkwsSteeringMethodShPtr steeringMethod
+	= EllipticSteeringMethod::create (attDistance);
+      CkwsDirectPathShPtr directPath 
+	= steeringMethod->makeDirectPath (previousCfg, sampleCfg);
+      dpValidator ()->validate (*directPath);
+
+      // hppDout (notice, "Validating original direct path");
+      if (directPath->isValid ())
+	{
+	  CkwsNodeShPtr sampleNode;
+	  if (distance == i_path->length ())
+	    sampleNode = io_graph->nodeWithConfig (sampleCfg);
+	  else
+	    {
+	      sampleNode = CkwsNode::create (sampleCfg);
+	      io_graph->addNode (sampleNode);
+	    }
+	 
+	  const CkwsEdgeShPtr edge = CkwsEdge::create (directPath);
+	  io_graph->addEdge ((i_nodeAndCost.first).first,
+			     sampleNode,
+			     edge);
+
+	  const CkwsEdgeShPtr reverseEdge
+	    = CkwsEdge::create (CkwsDirectPath::createReversed (directPath));
+	  io_graph->addEdge (sampleNode,
+			     (i_nodeAndCost.first).first,
+			     reverseEdge);
+	 
+  	  const NodeAndDistance sampleNodeAndDistance (sampleNode, distance);
+
+	  const double previousG = boost::get<0> (i_nodeAndCost.second);
+	  double sampleG = previousG
+	    + attDistance->distance (previousCfg, sampleCfg);
+
+	  const double sampleH
+	    = heuristicEstimate (i_nodeAndCost, sampleNodeAndDistance, i_path);
+	  
+	  const double sampleF = sampleG + sampleH;
+
+	  const Cost sampleCost (sampleG, sampleH, sampleF);
+
+	  o_set.insert (NodeAndCost (sampleNodeAndDistance, sampleCost));
+	}
+      
+      CkwsConfig copySampleCfg (sampleCfg);
+      makeTangentConfig (copySampleCfg, distance, i_path);
+
+      for (unsigned int i = 0; i < attOrientationAngles.size (); i++)
+	{
+	  CkwsConfig orientedCfg (copySampleCfg);
+	  orientedCfg.dofValue (5, orientedCfg.dofValue (5)
+				+ attOrientationAngles.find (i)->second);
+	  
+	  if (orientedCfg.dofValue (5) == sampleCfg.dofValue (5))
+	    continue;
+
+	  cfgValidator ()->validate (orientedCfg);
+	  
+	  // hppDout (notice, "Validating oriented configuration");
+	  if (orientedCfg.isValid ())
+	    {
+	      directPath
+		= steeringMethod->makeDirectPath (previousCfg, orientedCfg);
+	      
+	      dpValidator ()->validate (*directPath);
+
+	      // hppDout (notice, "Validating oriented direct path");
+	      if (directPath->isValid ())
+		{
+		  CkwsNodeShPtr orientedNode = CkwsNode::create (orientedCfg);
+		  io_graph->addNode (orientedNode);
+
+		  CkwsEdgeShPtr edge = CkwsEdge::create (directPath);
+		  io_graph->addEdge ((i_nodeAndCost.first).first,
+		  		     orientedNode,
+		  		     edge);
+
+		  const CkwsEdgeShPtr reverseEdge
+		    = CkwsEdge::create (CkwsDirectPath::
+					createReversed (directPath));
+		  io_graph->addEdge (orientedNode,
+				     (i_nodeAndCost.first).first,
+				     reverseEdge);
+
+		  const NodeAndDistance orientedNodeAndDistance (orientedNode,
+								 distance);
+	 
+		  const double previousG = boost::get<0> (i_nodeAndCost.second);
+		  double orientedG = previousG
+		    + attDistance->distance (previousCfg, orientedCfg);
+		  
+		  const double orientedH
+		    = heuristicEstimate (i_nodeAndCost, orientedNodeAndDistance,
+					 i_path);
+		  
+		  const double orientedF = orientedG + orientedH;
+
+		  const Cost orientedCost (orientedG, orientedH, orientedF);
+		  
+		  o_set.insert (NodeAndCost (orientedNodeAndDistance,
+					     orientedCost));
+		}
+	    }
+	}
+      
+      return KD_OK;
+    }
+
+    double Optimizer::nodeDistance (const CkwsNodeShPtr& i_node1,
+				    const CkwsNodeShPtr& i_node2) const
+    {
+      CkwsConfig cfg1 = i_node1->config ();
+      CkwsConfig cfg2 = i_node2->config ();
+
+      return attDistance->distance (cfg1, cfg2);
+    }
+
+    ktStatus Optimizer::makeTangentConfig (CkwsConfig& io_cfg,
+					   const double distance,
+					   const CkwsPathShPtr& i_path)
+    {
+      CkwsConfig elementaryCfg (device ());
+      i_path->getConfigAtDistance (distance + stepSize () / 100, elementaryCfg);
+
+      const double dX = elementaryCfg.dofValue (0) - io_cfg.dofValue (0);
+      const double dY = elementaryCfg.dofValue (1) - io_cfg.dofValue (1);
+      const double angle = atan2 (dY, dX);
+
+      io_cfg.dofValue (5, angle);
+
       return KD_OK;
     }
 
@@ -269,7 +693,7 @@ namespace kws
       if (dpSuccess != KD_ERROR && cfgSuccess != KD_ERROR)
 	return KD_OK;
     }
-
+    /*
     ktStatus Optimizer::
     appendHashedDP ()
     {
@@ -668,7 +1092,7 @@ namespace kws
 	  return KD_ERROR;
 	}
       else return KD_OK;
-    }
+      }
 
     ktStatus Optimizer::getOriginalConfig (CkwsConfig& o_config)
     {
@@ -1213,7 +1637,7 @@ namespace kws
 	  return tryAppendFrontalLastStepDP (dpEndCfg);
 	}
     }
-
+    */
     Optimizer::Optimizer (unsigned int i_nbLoops,
 			  double i_double,
 			  unsigned int i_nbSteps) : CkwsPathOptimizer ()
@@ -1223,6 +1647,10 @@ namespace kws
       min_steps_number_ = i_nbSteps;
       step_size_ = human_size_/6;
       lateral_angle_ = M_PI / 2;
+
+      attOrientationAngles[FRONTAL] = 0;
+      attOrientationAngles[LATERAL_1] = M_PI / 2;
+      attOrientationAngles[LATERAL_2] = - M_PI / 2;
     }
 
   } // end of namespace hashoptimizer.
