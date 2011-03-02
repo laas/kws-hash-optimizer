@@ -578,6 +578,15 @@ namespace kws
 	  if (orientedCfg.dofValue (5) == sampleCfg.dofValue (5))
 	    continue;
 
+	  CkwsConfig symmetricCfg (i_nodeAndCost.first.first->config ());
+	  symmetricCfg.dofValue (5, symmetricCfg.dofValue (5) + M_PI);
+	  
+	  if (symmetricCfg.isEquivalent (orientedCfg))
+	    {
+	      hppDout (notice, "configurations are equivalent");
+	      continue;
+	    }
+
 	  cfgValidator ()->validate (orientedCfg);
 	  
 	  if (orientedCfg.isValid ())
