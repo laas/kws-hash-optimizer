@@ -178,6 +178,7 @@ namespace kws
 
 	  i_path_->appendDirectPath (directPath);
 	}
+      attLength = inPath ()->length ();
 
       // Start hash optimization.
       o_path_ = CkwsPath::create (device ());
@@ -393,7 +394,7 @@ namespace kws
     {
       double distance2 = i_nodeAndDistance2.second;
       
-      if (distance2 == i_path->length ())
+      if (distance2 == attLength)
 	return 0.;
 
       const double distance3 = distance2 + stepSize ();
@@ -411,7 +412,7 @@ namespace kws
 	  CkwsConfig endCfg (device ());
 	  i_path->getConfigAtEnd (endCfg);
 
-	  if (distance3 < i_path->length ())
+	  if (distance3 < attLength)
 	    {
 	      CkwsConfig frontalCfg (device ());
 	      i_path->getConfigAtDistance (distance3, frontalCfg);
@@ -421,7 +422,7 @@ namespace kws
 
 	      double nextDistance = distance3 + stepSize ();
 	      
-	      while (nextDistance < i_path->length ())
+	      while (nextDistance < attLength)
 		{
 		  CkwsConfig nextFrontalCfg (device ());
 		  i_path->getConfigAtDistance (nextDistance, nextFrontalCfg);
@@ -450,7 +451,7 @@ namespace kws
 	  heuristicEstimate2 = heuristicEstimate1
 	    - attDistance->distance (cfg1, frontalCfg2);
 
-	  if (distance3 < i_path->length ())
+	  if (distance3 < attLength)
 	    {
 	      CkwsConfig frontalCfg3 (device ());
 	      i_path->getConfigAtDistance (distance3, frontalCfg3);
@@ -494,9 +495,9 @@ namespace kws
     {
       double tryDistance = (i_nodeAndCost.first).second + stepSize ();
 
-      double distance = tryDistance < i_path->length () ?
+      double distance = tryDistance + stepSize () < attLength ?
 	tryDistance :
-	i_path->length ();
+	attLength;
 
       CkwsConfig sampleCfg (device ());
       i_path->getConfigAtDistance (distance, sampleCfg);
@@ -512,7 +513,7 @@ namespace kws
       if (directPath->isValid ())
 	{
 	  CkwsNodeShPtr sampleNode;
-	  if (distance == i_path->length ())
+	  if (distance == attLength)
 	    sampleNode = io_graph->nodeWithConfig (sampleCfg);
 	  else
 	    {

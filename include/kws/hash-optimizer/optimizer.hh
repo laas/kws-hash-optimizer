@@ -299,6 +299,8 @@ namespace kws
 
       OrientationAngles attOrientationAngles;
 
+      double attLength;
+
       OptimizerWkPtr optimizer_;
     };
   } // end of namespace hashoptimizer.
