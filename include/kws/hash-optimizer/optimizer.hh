@@ -135,6 +135,11 @@ namespace kws
       virtual ktStatus aStar (const CkwsPathShPtr& i_path);
 
       // FIXME {doxygen}
+      NodeAndCostSet::iterator
+      findInSet (const NodeAndCost& i_nodeAndCost,
+		 NodeAndCostSet& i_nodeAndCostSet) const;
+
+      // FIXME {doxygen}
       virtual void
       showRoadmapNodes (const CkwsRoadmapShPtr& i_roadmap) const;
 

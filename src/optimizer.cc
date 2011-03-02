@@ -291,14 +291,14 @@ namespace kws
       	      NodeAndCost loopNodeAndCost = *nodeIt;
 	      bool isBetter;
 
-      	      if (closedSet.find (loopNodeAndCost.first) != closedSet.end ())
+	      if (findInSet (loopNodeAndCost, closedSet) != closedSet.end ())
 		continue;
 	      
 	      const double newG = g
 		+ nodeDistance (node, (loopNodeAndCost.first).first);
 	      
 	      NodeAndCostSet::iterator nodeAndCostIt
-		= openSet.find (loopNodeAndCost.first);
+		= findInSet (loopNodeAndCost, openSet);
 
       	      if (nodeAndCostIt == openSet.end ())
       	      	{
@@ -330,6 +330,24 @@ namespace kws
       	}
 
       return KD_ERROR;
+    }
+
+    NodeAndCostSet::iterator Optimizer::
+    findInSet (const NodeAndCost& i_nodeAndCost,
+	       NodeAndCostSet& i_nodeAndCostSet) const
+    {
+      for (NodeAndCostSet::iterator nodeIt = i_nodeAndCostSet.begin ();
+	   nodeIt != i_nodeAndCostSet.end ();
+	   nodeIt++)
+	{
+	  if ((*nodeIt).first.first->config ()
+	      == i_nodeAndCost.first.first->config ())
+	    {
+	      return nodeIt;
+	    }
+	}
+
+      return i_nodeAndCostSet.end ();
     }
 
     void Optimizer::
